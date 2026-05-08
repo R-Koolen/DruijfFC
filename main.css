@@ -1,0 +1,138 @@
+@import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap');
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --bg:         #F0EBE1;
+  --card:       #FDFAF5;
+  --green:      #5DB075;
+  --coral:      #E8604C;
+  --yellow:     #F5C842;
+  --purple:     #9B8AE0;
+  --gray:       #C8C2B8;
+  --gray-dark:  #9E9890;
+  --text:       #2C2A26;
+  --text-light: #7A7570;
+  --shadow:     0 4px 20px rgba(0,0,0,0.10);
+  --shadow-sm:  0 2px 8px rgba(0,0,0,0.07);
+  --radius:     22px;
+  --radius-sm:  12px;
+  --tab-h:      76px;
+}
+
+body {
+  font-family: 'Nunito', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+  overflow-x: hidden;
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* ── SHARED HEADER ── */
+.page-header {
+  background: var(--card);
+  padding: 14px 20px;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  box-shadow: var(--shadow-sm);
+  position: sticky;
+  top: 0;
+  z-index: 50;
+}
+
+.page-header-title {
+  flex: 1;
+  font-size: 1.05rem;
+  font-weight: 800;
+  letter-spacing: -0.2px;
+}
+
+/* ── BACK BUTTON ── */
+.btn-back {
+  width: 38px; height: 38px;
+  border-radius: 50%;
+  border: 2px solid var(--gray);
+  background: transparent;
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: border-color 0.18s, background 0.18s;
+}
+.btn-back:hover { border-color: var(--text); background: var(--bg); }
+
+/* ── TAB BAR ── */
+.tab-bar {
+  position: fixed;
+  bottom: 0; left: 0; right: 0;
+  height: var(--tab-h);
+  background: var(--card);
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-around;
+  padding-top: 10px;
+  box-shadow: 0 -2px 16px rgba(0,0,0,0.07);
+  z-index: 100;
+}
+
+.tab-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  cursor: pointer;
+  padding: 6px 16px;
+  border-radius: var(--radius-sm);
+  border: none;
+  background: transparent;
+  font-family: 'Nunito', sans-serif;
+  transition: transform 0.15s;
+  min-width: 64px;
+  color: var(--gray-dark);
+}
+.tab-item:active { transform: scale(0.93); }
+
+.tab-item svg { transition: color 0.18s; }
+
+.tab-label {
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.2px;
+  transition: color 0.18s;
+}
+
+.tab-item.active .tab-label { color: var(--coral); }
+.tab-item.active svg { color: var(--coral); }
+
+/* ── COMMON PILL BADGE ── */
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 5px 12px;
+  border-radius: 50px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.3px;
+}
+
+/* ── DECORATIVE BLOBS ── */
+.blob-tl {
+  position: fixed;
+  top: -100px; left: -100px;
+  width: 340px; height: 340px;
+  background: radial-gradient(circle, #D4C5F9 0%, transparent 70%);
+  opacity: 0.4;
+  pointer-events: none;
+  z-index: 0;
+}
+.blob-br {
+  position: fixed;
+  bottom: -80px; right: -80px;
+  width: 300px; height: 300px;
+  background: radial-gradient(circle, #B8E4C9 0%, transparent 70%);
+  opacity: 0.4;
+  pointer-events: none;
+  z-index: 0;
+}

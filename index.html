@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Druijf FC</title>
+  <link rel="stylesheet" href="main.css" />
+  <link rel="stylesheet" href="index.css" />
+</head>
+<body>
+
+<div class="blob-tl"></div>
+<div class="blob-br"></div>
+
+<div class="home-layout">
+
+  <!-- App header -->
+  <header class="app-header">
+    <div class="app-title">Druijf FC</div>
+    <div class="app-subtitle">Kameraden site</div>
+  </header>
+
+  <!-- Top tab nav -->
+  <nav class="home-tab-nav">
+    <button class="home-tab-btn active" data-tab="tab-questions">Vragen</button>
+    <button class="home-tab-btn" data-tab="tab-soon1">Would You Rather</button>
+    <button class="home-tab-btn" data-tab="tab-soon2">Hot Takes</button>
+  </nav>
+
+  <!-- Tab content -->
+  <div class="tab-content">
+
+    <!-- QUESTIONS GAME -->
+    <div class="tab-panel active" id="tab-questions">
+      <div class="game-card">
+        <div class="game-card-blob" style="background: var(--coral);"></div>
+
+        <div class="game-title">Druijfhartig</div>
+        <div class="game-desc">
+          Askreddit maar dan zonder zoek gedoe
+        </div>
+
+        <div class="category-pills">
+          <span class="cat-pill">💛 Herinneringen</span>
+          <span class="cat-pill">🚀 Dromen</span>
+          <span class="cat-pill">⭐ Waarden</span>
+          <span class="cat-pill">😂 Lol</span>
+          <span class="cat-pill">❤️ Relaties</span>
+          <span class="cat-pill">🔮 Diep</span>
+        </div>
+
+        <a href="questions.html" class="btn-play">
+          <svg width="18" height="18" viewBox="0 0 18 18" fill="white">
+            <polygon points="4,2 16,9 4,16"/>
+          </svg>
+          
+        </a>
+      </div>
+    </div>
+
+    <!-- COMING SOON 1 -->
+    <div class="tab-panel" id="tab-soon1">
+      <div class="soon-card">
+        <div class="soon-icon">🤔</div>
+        <div class="soon-title">Would You Rather</div>
+        <div class="soon-desc">Tough choices, great conversations.<br>Coming soon!</div>
+      </div>
+    </div>
+
+    <!-- COMING SOON 2 -->
+    <div class="tab-panel" id="tab-soon2">
+      <div class="soon-card">
+        <div class="soon-icon">🌶️</div>
+        <div class="soon-title">Hot Takes</div>
+        <div class="soon-desc">Debate your spiciest opinions.<br>Coming soon!</div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Bottom tab bar -->
+  <nav class="tab-bar">
+    <button class="tab-item active">
+      <svg width="22" height="22" viewBox="0 0 22 22" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M3 9.5L11 3l8 6.5V19a1 1 0 01-1 1H4a1 1 0 01-1-1V9.5z"/>
+        <path d="M8 20v-8h6v8"/>
+      </svg>
+      <span class="tab-label">Home</span>
+    </button>
+
+    <button class="tab-item">
+      <svg width="22" height="22" viewBox="0 0 22 22" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="11" cy="11" r="8"/>
+        <path d="M11 7v4l2.5 2.5"/>
+      </svg>
+      <span class="tab-label">History</span>
+    </button>
+
+    <button class="tab-item">
+      <svg width="22" height="22" viewBox="0 0 22 22" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="11" cy="8" r="3.5"/>
+        <path d="M4 20c0-3.866 3.134-7 7-7s7 3.134 7 7"/>
+      </svg>
+      <span class="tab-label">Profile</span>
+    </button>
+  </nav>
+
+</div>
+
+<script src="index.js"></script>
+</body>
+</html>
