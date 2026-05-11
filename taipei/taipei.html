@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Taipei in a Day</title>
+  <link rel="stylesheet" href="../main.css" />
+  <link rel="stylesheet" href="taipei.css" />
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+</head>
+<body>
+
+<div class="blob-tl"></div>
+<div class="blob-br"></div>
+
+<div class="hunt-page">
+
+  <header class="hunt-header">
+    <button class="btn-back" onclick="window.location.href='../index.html'">
+      <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
+        <path d="M11 4L6 9L11 14" stroke="#2C2A26" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </button>
+    <div class="hunt-header-title">Taipei in a Day</div>
+    <span class="progress-pill" id="progressPill">Stop 1 of 6</span>
+  </header>
+
+  <div class="hunt-stage" id="huntStage"></div>
+
+</div>
+
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script src="taipei.js"></script>
+</body>
+</html>
