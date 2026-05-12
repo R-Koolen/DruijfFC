@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="nl">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -9,135 +9,63 @@
 </head>
 <body>
 
-<div class="blob-tl"></div>
-<div class="blob-br"></div>
+<main class="home page-enter">
 
-<div class="home-layout">
-
-  <!-- App header -->
-  <header class="app-header">
-    <div class="app-title">Druijf FC</div>
-    <div class="app-subtitle">Kameraden site</div>
+  <header class="home-hero">
+    <div class="home-greeting">Hé daar <span class="wave">👋</span></div>
+    <h1 class="home-title">Welk spel doen we vanavond?</h1>
   </header>
 
-  <!-- Top tab nav -->
-  <nav class="home-tab-nav">
-    <button class="home-tab-btn active" data-tab="tab-questions">Vragen</button>
-    <button class="home-tab-btn" data-tab="tab-taipei">Taipei Speurtocht</button>
-    <button class="home-tab-btn" data-tab="tab-soon1">Would You Rather</button>
-    <button class="home-tab-btn" data-tab="tab-soon2">Hot Takes</button>
-  </nav>
+  <div class="home-cards">
 
-  <!-- Tab content -->
-  <div class="tab-content">
-
-    <!-- QUESTIONS GAME -->
-    <div class="tab-panel active" id="tab-questions">
-      <div class="game-card">
-        <div class="game-card-blob" style="background: var(--coral);"></div>
-
-        <div class="game-title">Druijfhartig</div>
-        <div class="game-desc">
-          Askreddit maar dan zonder zoek gedoe
-        </div>
-
-        <div class="category-pills">
-          <span class="cat-pill">💛 Herinneringen</span>
-          <span class="cat-pill">🚀 Dromen</span>
-          <span class="cat-pill">⭐ Waarden</span>
-          <span class="cat-pill">😂 Lol</span>
-          <span class="cat-pill">❤️ Relaties</span>
-          <span class="cat-pill">🔮 Diep</span>
-        </div>
-
-        <a href="questions/questions.html" class="btn-play">
-          <svg width="18" height="18" viewBox="0 0 18 18" fill="white">
-            <polygon points="4,2 16,9 4,16"/>
-          </svg>
-          
-        </a>
+    <!-- Schatzoeker -->
+    <a href="taipei/taipei.html" class="game-card game-card--treasure">
+      <div class="game-card-mascot">🗺️</div>
+      <div class="game-card-body">
+        <div class="game-card-eyebrow">Speurtocht</div>
+        <div class="game-card-title">Schatzoeker</div>
+        <div class="game-card-desc">7 stops door Taipei in één dag</div>
       </div>
-    </div>
-
-    <!-- TAIPEI SCAVENGER HUNT -->
-    <div class="tab-panel" id="tab-taipei">
-      <div class="game-card">
-        <div class="game-card-blob" style="background: var(--green);"></div>
-
-        <div class="game-card-top">
-          <div class="game-icon">🏯</div>
-          <span class="game-count">7 stops</span>
-        </div>
-
-        <div class="game-title">Taipei in a Day</div>
-        <div class="game-desc">
-          Discover Taipei through 6 iconic stops. Solve a fun task at each one to unlock the next location.
-        </div>
-
-        <div class="category-pills">
-          <span class="cat-pill">🏛 History</span>
-          <span class="cat-pill">📸 Photo hunt</span>
-          <span class="cat-pill">🥟 Food</span>
-          <span class="cat-pill">🌅 Views</span>
-        </div>
-
-        <a href="taipei/taipei.html" class="btn-play">
-          <svg width="18" height="18" viewBox="0 0 18 18" fill="white">
-            <polygon points="4,2 16,9 4,16"/>
-          </svg>
-          Start hunt
-        </a>
+      <div class="game-card-chevron" aria-hidden="true">
+        <svg width="22" height="22" viewBox="0 0 22 22" fill="none">
+          <path d="M8 5l6 6-6 6" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
       </div>
-    </div>
+    </a>
 
-    <!-- COMING SOON 1 -->
-    <div class="tab-panel" id="tab-soon1">
-      <div class="soon-card">
-        <div class="soon-icon">🤔</div>
-        <div class="soon-title">Would You Rather</div>
-        <div class="soon-desc">Tough choices, great conversations.<br>Coming soon!</div>
+    <!-- Druijfhartig (Questions) -->
+    <a href="questions/questions.html" class="game-card game-card--questions">
+      <div class="game-card-mascot">💬</div>
+      <div class="game-card-body">
+        <div class="game-card-eyebrow">Druijfhartig</div>
+        <div class="game-card-title">Vragen</div>
+        <div class="game-card-desc">Leer elkaar beter kennen</div>
       </div>
-    </div>
+      <div class="game-card-chevron" aria-hidden="true">
+        <svg width="22" height="22" viewBox="0 0 22 22" fill="none">
+          <path d="M8 5l6 6-6 6" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </div>
+    </a>
 
-    <!-- COMING SOON 2 -->
-    <div class="tab-panel" id="tab-soon2">
-      <div class="soon-card">
-        <div class="soon-icon">🌶️</div>
-        <div class="soon-title">Hot Takes</div>
-        <div class="soon-desc">Debate your spiciest opinions.<br>Coming soon!</div>
+    <!-- Would You Rather (coming soon) -->
+    <div class="game-card game-card--wyr is-disabled" aria-disabled="true">
+      <div class="game-card-mascot">⚖️</div>
+      <div class="game-card-body">
+        <div class="game-card-eyebrow">Keuzespel</div>
+        <div class="game-card-title">Would You Rather</div>
+        <div class="game-card-desc">Onmogelijke keuzes maken</div>
       </div>
+      <div class="game-card-soon">Binnenkort</div>
     </div>
 
   </div>
 
-  <!-- Bottom tab bar -->
-  <nav class="tab-bar">
-    <button class="tab-item active">
-      <svg width="22" height="22" viewBox="0 0 22 22" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-        <path d="M3 9.5L11 3l8 6.5V19a1 1 0 01-1 1H4a1 1 0 01-1-1V9.5z"/>
-        <path d="M8 20v-8h6v8"/>
-      </svg>
-      <span class="tab-label">Home</span>
-    </button>
+  <footer class="home-foot">
+    <span>een echt kameradenmove — Druijf FC</span>
+  </footer>
 
-    <button class="tab-item">
-      <svg width="22" height="22" viewBox="0 0 22 22" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-        <circle cx="11" cy="11" r="8"/>
-        <path d="M11 7v4l2.5 2.5"/>
-      </svg>
-      <span class="tab-label">History</span>
-    </button>
-
-    <button class="tab-item">
-      <svg width="22" height="22" viewBox="0 0 22 22" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-        <circle cx="11" cy="8" r="3.5"/>
-        <path d="M4 20c0-3.866 3.134-7 7-7s7 3.134 7 7"/>
-      </svg>
-      <span class="tab-label">Profile</span>
-    </button>
-  </nav>
-
-</div>
+</main>
 
 <script src="index.js"></script>
 </body>

@@ -1,28 +1,25 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="nl">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Questions</title>
+  <title>Druijfhartig</title>
   <link rel="stylesheet" href="../main.css" />
   <link rel="stylesheet" href="questions.css" />
 </head>
 <body>
 
-<div class="blob-tl"></div>
-<div class="blob-br"></div>
-
-<div class="q-page">
+<div class="q-page page-enter">
 
   <!-- Header -->
   <header class="q-header">
-    <button class="btn-back" onclick="window.location.href='../index.html'">
+    <button class="btn-back" onclick="window.location.href='../index.html'" aria-label="Terug">
       <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
-        <path d="M11 4L6 9L11 14" stroke="#2C2A26" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+        <path d="M11 4L6 9L11 14" stroke="#15171F" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
       </svg>
     </button>
     <div class="q-header-center">
-      <div class="q-header-title">Get to Know Each Other</div>
+      <div class="q-header-title">Druijfhartig</div>
     </div>
     <div class="q-header-spacer"></div>
   </header>
@@ -52,10 +49,10 @@
     </div>
 
     <div class="q-buttons">
-      <button class="btn-action btn-skip" id="btnSkip" title="Different topic">
+      <button class="btn-action btn-skip" id="btnSkip" title="Ander onderwerp" aria-label="Ander onderwerp">
         ✕
       </button>
-      <button class="btn-action btn-next" id="btnNext" title="Similar question">
+      <button class="btn-action btn-next" id="btnNext" title="Zelfde sfeer" aria-label="Zelfde sfeer">
         ✓
       </button>
     </div>

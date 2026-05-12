@@ -1,138 +1,89 @@
-@import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
 
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
 :root {
-  --bg:         #F0EBE1;
-  --card:       #FDFAF5;
-  --green:      #5DB075;
-  --coral:      #E8604C;
-  --yellow:     #F5C842;
-  --purple:     #9B8AE0;
-  --gray:       #C8C2B8;
-  --gray-dark:  #9E9890;
-  --text:       #2C2A26;
-  --text-light: #7A7570;
-  --shadow:     0 4px 20px rgba(0,0,0,0.10);
-  --shadow-sm:  0 2px 8px rgba(0,0,0,0.07);
-  --radius:     22px;
-  --radius-sm:  12px;
-  --tab-h:      76px;
+  /* Base surfaces */
+  --bg:            #FAFBFD;
+  --surface:       #FFFFFF;
+  --surface-soft:  #F3F4F8;
+  --text:          #15171F;
+  --text-muted:    #6B7280;
+  --border:        #E5E7EB;
+  --border-strong: #D1D5DB;
+
+  /* Shadows (multi-layer soft) */
+  --shadow-card:  0 8px 24px rgba(15,17,31,0.06), 0 2px 6px rgba(15,17,31,0.04);
+  --shadow-hover: 0 14px 40px rgba(15,17,31,0.10), 0 4px 10px rgba(15,17,31,0.06);
+  --shadow-lift:  0 20px 50px rgba(15,17,31,0.12), 0 6px 16px rgba(15,17,31,0.08);
+
+  /* Radii */
+  --radius:      28px;
+  --radius-sm:   18px;
+  --radius-pill: 999px;
+
+  /* Per-game gradient stops */
+  --treasure-from:  #FF8A3D;
+  --treasure-to:    #FF4D8D;
+  --questions-from: #5B7CFF;
+  --questions-to:   #9333EA;
+  --wyr-from:       #34D399;
+  --wyr-to:         #06B6D4;
+}
+
+html, body {
+  height: 100%;
 }
 
 body {
-  font-family: 'Nunito', sans-serif;
+  font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
   background: var(--bg);
   color: var(--text);
   min-height: 100vh;
   overflow-x: hidden;
   -webkit-tap-highlight-color: transparent;
-}
-
-/* ── SHARED HEADER ── */
-.page-header {
-  background: var(--card);
-  padding: 14px 20px;
-  display: flex;
-  align-items: center;
-  gap: 14px;
-  box-shadow: var(--shadow-sm);
-  position: sticky;
-  top: 0;
-  z-index: 50;
-}
-
-.page-header-title {
-  flex: 1;
-  font-size: 1.05rem;
-  font-weight: 800;
-  letter-spacing: -0.2px;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
 }
 
 /* ── BACK BUTTON ── */
 .btn-back {
-  width: 38px; height: 38px;
+  width: 42px; height: 42px;
   border-radius: 50%;
-  border: 2px solid var(--gray);
-  background: transparent;
+  border: 1.5px solid var(--border);
+  background: var(--surface);
   display: flex; align-items: center; justify-content: center;
   cursor: pointer;
   flex-shrink: 0;
-  transition: border-color 0.18s, background 0.18s;
+  transition: transform 0.18s, border-color 0.18s, box-shadow 0.18s;
+  box-shadow: 0 2px 6px rgba(15,17,31,0.04);
 }
-.btn-back:hover { border-color: var(--text); background: var(--bg); }
+.btn-back:active { transform: scale(0.92); }
 
-/* ── TAB BAR ── */
-.tab-bar {
-  position: fixed;
-  bottom: 0; left: 0; right: 0;
-  height: var(--tab-h);
-  background: var(--card);
-  display: flex;
-  align-items: flex-start;
-  justify-content: space-around;
-  padding-top: 10px;
-  box-shadow: 0 -2px 16px rgba(0,0,0,0.07);
-  z-index: 100;
+@media (hover: hover) and (pointer: fine) {
+  .btn-back:hover {
+    border-color: var(--border-strong);
+    box-shadow: var(--shadow-card);
+  }
 }
 
-.tab-item {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 4px;
-  cursor: pointer;
-  padding: 6px 16px;
-  border-radius: var(--radius-sm);
-  border: none;
-  background: transparent;
-  font-family: 'Nunito', sans-serif;
-  transition: transform 0.15s;
-  min-width: 64px;
-  color: var(--gray-dark);
-}
-.tab-item:active { transform: scale(0.93); }
-
-.tab-item svg { transition: color 0.18s; }
-
-.tab-label {
-  font-size: 0.7rem;
-  font-weight: 700;
-  letter-spacing: 0.2px;
-  transition: color 0.18s;
-}
-
-.tab-item.active .tab-label { color: var(--coral); }
-.tab-item.active svg { color: var(--coral); }
-
-/* ── COMMON PILL BADGE ── */
-.badge {
+/* ── COMMON PILL ── */
+.pill {
   display: inline-flex;
   align-items: center;
-  gap: 5px;
-  padding: 5px 12px;
-  border-radius: 50px;
-  font-size: 0.75rem;
+  gap: 6px;
+  padding: 6px 14px;
+  border-radius: var(--radius-pill);
+  font-size: 0.78rem;
   font-weight: 700;
-  letter-spacing: 0.3px;
+  letter-spacing: 0.1px;
+  background: var(--surface-soft);
+  color: var(--text-muted);
 }
 
-/* ── DECORATIVE BLOBS ── */
-.blob-tl {
-  position: fixed;
-  top: -100px; left: -100px;
-  width: 340px; height: 340px;
-  background: radial-gradient(circle, #D4C5F9 0%, transparent 70%);
-  opacity: 0.4;
-  pointer-events: none;
-  z-index: 0;
+/* ── PAGE FADE-IN ── */
+@keyframes pageIn {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: translateY(0); }
 }
-.blob-br {
-  position: fixed;
-  bottom: -80px; right: -80px;
-  width: 300px; height: 300px;
-  background: radial-gradient(circle, #B8E4C9 0%, transparent 70%);
-  opacity: 0.4;
-  pointer-events: none;
-  z-index: 0;
-}
+.page-enter { animation: pageIn 0.35s cubic-bezier(0.4,0,0.2,1); }
