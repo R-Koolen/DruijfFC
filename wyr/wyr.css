@@ -1,4 +1,4 @@
-/* Druijfhartig — iFruijt Messages style (flat, 2013) */
+/* Zou jij liever — iFruijt WYR style (flat, 2013) */
 
 html, body {
   background:
@@ -15,7 +15,7 @@ body {
   min-height: 100dvh;
 }
 
-/* ── PHONE SHELL (black plastic, shared) ── */
+/* ── PHONE SHELL ── */
 .ifruit-shell {
   position: relative;
   width: 100%;
@@ -132,7 +132,7 @@ body {
   text-shadow: 0 1px 1px rgba(0,0,0,0.4);
 }
 
-/* ── CATEGORY STRIP (colored bar showing category) ── */
+/* ── CATEGORY STRIP ── */
 .q-cat-strip {
   height: 32px;
   display: flex;
@@ -150,71 +150,106 @@ body {
   box-shadow: inset 0 -1px 0 rgba(0,0,0,0.3);
 }
 
-/* ── MESSAGE AREA ── */
-.q-msg-area {
+/* ── WYR CONTENT AREA ── */
+.wyr-area {
   flex: 1;
   overflow-y: auto;
   -webkit-overflow-scrolling: touch;
+  display: flex;
+  flex-direction: column;
+  padding: 16px 12px 12px;
 }
 
-.q-msg-row {
-  display: grid;
-  grid-template-columns: 40px 1fr auto;
-  gap: 12px;
-  align-items: flex-start;
-  padding: 14px 12px;
-  background: var(--jl-row);
-  border-bottom: 1px solid var(--jl-divider);
+/* ── ANIMATED CARD ── */
+.wyr-card {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
   transition:
     transform 0.4s var(--ease-spring),
-    opacity 0.4s,
-    background 0.4s;
+    opacity 0.4s;
 }
-.q-msg-row.exit-left  { transform: translateX(-80px); opacity: 0; }
-.q-msg-row.exit-right { transform: translateX(80px);  opacity: 0; }
-.q-msg-row.enter      { animation: msgEnter 0.42s var(--ease-spring) forwards; }
-@keyframes msgEnter {
-  from { opacity: 0; transform: translateY(20px); }
+.wyr-card.exit-left  { transform: translateX(-80px); opacity: 0; }
+.wyr-card.exit-right { transform: translateX(80px);  opacity: 0; }
+.wyr-card.enter      { animation: wyrEnter 0.42s var(--ease-spring) forwards; }
+@keyframes wyrEnter {
+  from { opacity: 0; transform: translateY(16px); }
   to   { opacity: 1; transform: translateY(0); }
 }
 
-.q-msg-avatar {
-  width: 40px; height: 40px;
-  border-radius: 6px;
-  display: grid;
-  place-items: center;
-  font-size: 22px;
-  background: var(--cat-color, var(--jl-row-alt));
-  box-shadow:
-    inset 0 0 0 1px rgba(0,0,0,0.4),
-    0 1px 0 rgba(255,255,255,0.06);
-  transition: background 0.45s ease;
-}
-
-.q-msg-body { min-width: 0; padding-top: 2px; }
-.q-msg-name {
+/* ── "ZOU JIJ LIEVER..." PROMPT ── */
+.wyr-prompt {
   font-size: 12px;
-  font-weight: 800;
-  color: var(--jl-text);
-  letter-spacing: 0.02em;
-  margin-bottom: 4px;
-}
-.q-msg-text {
-  font-size: 15px;
-  font-weight: 500;
-  color: var(--jl-text);
-  line-height: 1.45;
-}
-
-.q-msg-time {
-  font-size: 11px;
-  font-weight: 600;
+  font-weight: 700;
   color: var(--jl-text-muted);
-  padding-top: 4px;
-  white-space: nowrap;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  margin: 0 0 2px;
 }
 
-/* ── ACTION BUTTONS (flat, sharp 6px corners) ── */
+/* ── OPTION BUTTONS ── */
+.wyr-option {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 80px;
+  padding: 14px 16px;
+  border: none;
+  border-radius: 6px;
+  font-family: inherit;
+  font-size: 15px;
+  font-weight: 600;
+  color: #fff;
+  background: var(--jl-row);
+  cursor: pointer;
+  text-align: center;
+  line-height: 1.4;
+  transition: filter 0.12s, background 0.12s, transform 0.12s;
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,0.08),
+    inset 0 -1px 0 rgba(0,0,0,0.3);
+}
+.wyr-option:active {
+  filter: brightness(0.85);
+  transform: scale(0.98);
+}
+
+/* Letter badge A/B beside each button */
+.wyr-option::before {
+  content: attr(data-letter);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 26px;
+  height: 26px;
+  border-radius: 4px;
+  background: var(--cat-color, var(--header-jobs));
+  color: #fff;
+  font-size: 13px;
+  font-weight: 800;
+  flex-shrink: 0;
+  margin-right: 12px;
+  transition: background 0.45s ease;
+  box-shadow: inset 0 -1px 0 rgba(0,0,0,0.3);
+}
+
+/* Chosen flash */
+.wyr-option.wyr-chosen {
+  background: var(--cat-color, var(--header-jobs));
+  transition: background 0.08s;
+}
+
+/* ── OR DIVIDER ── */
+.wyr-or {
+  text-align: center;
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--jl-text-muted);
+  letter-spacing: 0.06em;
+  padding: 2px 0;
+}
+
+/* ── ACTION BUTTONS (flat, 6px corners) ── */
 .q-actions {
   padding: 12px;
   display: flex;
@@ -259,7 +294,7 @@ body {
 }
 .q-btn-next .q-btn-icon { font-size: 16px; font-weight: 900; }
 
-/* ── BOTTOM CHROME STRIP (shared) ── */
+/* ── BOTTOM CHROME STRIP ── */
 .ifruit-bottom {
   height: 58px;
   display: grid;

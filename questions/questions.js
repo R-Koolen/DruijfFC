@@ -164,7 +164,7 @@ function showQuestion(categoryId, question, exitDirection = null) {
     currentQuestion   = question;
 
     catBadge.textContent = `${cat.emoji}  ${cat.name}`;
-    catBadge.style.setProperty('--cat-color', cat.color);
+    document.documentElement.style.setProperty('--cat-color', cat.color);
     cardBlob.style.background = cat.color;
     qEmoji.textContent = cat.emoji;
     qText.textContent  = question;

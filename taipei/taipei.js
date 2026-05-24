@@ -13,7 +13,7 @@ const STOPS = [
         answerKeywords: ['achthoek', 'octagon', 'octagonaal', 'achtkant', '8-hoek', 'achthoekig'],
         hints: [
           "De vorm past bij een geluksgetal in de Chinese cultuur.",
-          "Het heeft meer hoeken dan een vierkant, maar minder dan een cirkel."
+          "Als je deze niet weet, kan je beter terug naar de basisschool"
         ],
         successMsg: "Correct! Het dak is achthoekig. Het getal acht wordt in de Chinese cultuur verbonden met geluk en voorspoed."
       },
@@ -22,7 +22,7 @@ const STOPS = [
         answerKeywords: ['theater', 'voorstellingen', 'national theater'],
         hints: [
           "Links is dus niet rechts",
-          "Het rijmt op zie je later!"
+          "Misschien dat we hier een keer naar Tafkal kunnen, of misschien beter in NL"
         ],
         successMsg: "Klopt! Het plein wordt geflankeerd door het National Theater."
       },
@@ -47,12 +47,12 @@ const STOPS = [
     travelTip: "Verlaat het CKS-plein aan de zuidkant richting Nanhai Road — de ingang van de botanische tuin is zo'n 5 minuten lopen naar het zuiden.",
     questions: [
       {
-        task: "De lotusvijver is het hart van de tuin. Welke bloem groeit hier in overvloed en staat in de Aziatische cultuur symbool voor zuiverheid?",
-        answerKeywords: ['lotus', 'lotusbloem', 'lotusbloemen', 'waterlelie', 'water lily'],
+        task: "Bij het historische Herbariumgebouw staat een informatiebord over de oorsprong van het gebouw. In welk jaar werd dit rode bakstenen gebouw gebouwd?",
+        answerKeywords: ['1924'],
         hints: [
-          "Het is een waterplant met grote roze of witte bloemen.",
-          "De naam van de vijver verraadt alles — en de bloem staat ook symbool voor het Boeddhisme."
-        ],
+          "Zoek naar een gebouw met veel rode bakstenen.",
+          "Het antwoord staat op een officieel informatiepaneel.5"
+       ],
         successMsg: "Precies! De lotus — symbool van zuiverheid en verlichting in het Boeddhisme. Ze groeien vanuit het modderige water omhoog."
       },
       {
@@ -284,32 +284,77 @@ const STOPS = [
   }
 ];
 
+// ════════════════════════════════════════════════════════════
+// iFruijt Job-List Schatzoeker — flat 2013 style
+// ════════════════════════════════════════════════════════════
+
+// Per-stop avatar colors (used in Job List rows + question detail backdrop)
+const STOP_COLORS = {
+  cks:        '#3A6BD8',
+  botanical:  '#4DA84D',
+  ximending:  '#E0B23A',
+  longshan:   '#C9302C',
+  bopiliao:   '#8B5A2B',
+  taipei101:  '#7A47C2',
+  elephant:   '#2A8F94',
+};
+
 // ── STATE ──
 const STORAGE_KEY = 'taipei_progress';
 let currentIdx         = parseInt(localStorage.getItem(STORAGE_KEY) || '0', 10);
 let hintsShown         = 0;
-let phase              = 'travel';
+let phase              = 'list';   // 'list' | 'travel' | 'info' | 'task' | 'finish'
+let taskView           = 'list';   // sub-phase for task: 'list' | 'detail'
 let currentQuestionIdx = 0;
 let stopCorrect        = 0;
-let duoPhase = 'role-select'; // 'role-select' | 'clues' | 'answer'
-let duoRole  = null;          // 'player1' | 'player2'
-let skipped = JSON.parse(localStorage.getItem('taipei_skipped') || '[]');
-let solved  = JSON.parse(localStorage.getItem('taipei_solved')  || '[]');
+let duoPhase           = 'role-select'; // 'role-select' | 'clues' | 'answer'
+let duoRole            = null;
+let hintsUsedThisStop  = 0;
+let perQuestionState   = {};       // map of stopId_qIdx -> 'done' | 'skipped' (resets per stop)
+let skipped     = JSON.parse(localStorage.getItem('taipei_skipped') || '[]');
+let solved      = JSON.parse(localStorage.getItem('taipei_solved')  || '[]');
+let starsByStop = JSON.parse(localStorage.getItem('taipei_stars')   || '{}');
+let startTime   = parseInt(localStorage.getItem('taipei_start_ts')  || '0', 10);
 
-if (currentIdx >= STOPS.length) {
-  phase = 'finish';
-  currentIdx = STOPS.length - 1;
-}
+if (currentIdx >= STOPS.length) currentIdx = STOPS.length - 1;
+
+// On entry we always show the Job List, regardless of where progress was
+phase = (solved.length + skipped.length >= STOPS.length) ? 'finish' : 'list';
 
 // ── DOM REFS ──
-const stage      = document.getElementById('huntStage');
-const progressEl = document.getElementById('progressPill');
+const stage           = document.getElementById('huntStage');
+const headerTitleEl   = document.getElementById('jlHeaderTitle');
 
 // ── HELPERS ──
 function saveProgress() {
   localStorage.setItem(STORAGE_KEY, String(currentIdx));
   localStorage.setItem('taipei_skipped', JSON.stringify(skipped));
   localStorage.setItem('taipei_solved',  JSON.stringify(solved));
+  localStorage.setItem('taipei_stars',   JSON.stringify(starsByStop));
+  if (startTime) localStorage.setItem('taipei_start_ts', String(startTime));
+}
+
+function ensureStartTime() {
+  if (!startTime) {
+    startTime = Date.now();
+    localStorage.setItem('taipei_start_ts', String(startTime));
+  }
+}
+
+function calcStars(correctCount, total, hintsUsed) {
+  if (correctCount < total) return correctCount > 0 ? 1 : 0;
+  if (hintsUsed === 0) return 3;
+  if (hintsUsed <= 2)  return 2;
+  return 1;
+}
+
+function formatDuration(ms) {
+  const totalSec = Math.floor(ms / 1000);
+  const h = Math.floor(totalSec / 3600);
+  const m = Math.floor((totalSec % 3600) / 60);
+  const s = totalSec % 60;
+  if (h > 0) return `${h}u ${m}m`;
+  return `${m}m ${String(s).padStart(2,'0')}s`;
 }
 
 function escapeHtml(str) {
@@ -321,7 +366,20 @@ function checkAnswer(input, keywords) {
   return keywords.some(k => cleaned.includes(k.toLowerCase()));
 }
 
-// ── MAP ──
+function stopIndexById(id) { return STOPS.findIndex(s => s.id === id); }
+
+function isDone(stopId)    { return solved.includes(stopId) || skipped.includes(stopId); }
+function isCurrent(stopId) { return stopIndexById(stopId) === currentIdx && !isDone(stopId); }
+function isLocked(stopId)  {
+  const idx = stopIndexById(stopId);
+  return idx > currentIdx && !isDone(stopId);
+}
+
+function setHeader(title) {
+  headerTitleEl.textContent = title;
+}
+
+// ── LEAFLET MAP (light Voyager tiles, simple markers) ──
 function initMap(idx) {
   const stop     = STOPS[idx];
   const prevStop = idx > 0 ? STOPS[idx - 1] : null;
@@ -333,32 +391,32 @@ function initMap(idx) {
     zoomControl: true,
   });
 
-  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-    attribution: '© <a href="https://openstreetmap.org">OSM</a>',
+  L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
+    attribution: '© OpenStreetMap © CARTO',
+    subdomains: 'abcd',
     maxZoom: 19,
   }).addTo(map);
 
   const destIcon = L.divIcon({
-    html: `<div style="width:18px;height:18px;border-radius:50%;background:#FF8A3D;border:3px solid #fff;box-shadow:0 2px 8px rgba(0,0,0,0.35)"></div>`,
-    className: '', iconSize: [18, 18], iconAnchor: [9, 9], popupAnchor: [0, -12],
+    html: `<div style="width:16px;height:16px;border-radius:50%;background:#C9302C;border:3px solid #fff;box-shadow:0 1px 4px rgba(0,0,0,0.5)"></div>`,
+    className: '', iconSize: [16, 16], iconAnchor: [8, 8], popupAnchor: [0, -10],
   });
-
   L.marker(stop.coords, { icon: destIcon }).addTo(map)
-    .bindPopup(`<strong>${stop.name}</strong>`, { closeButton: false }).openPopup();
+    .bindPopup(`<strong>${stop.name}</strong>`, { closeButton: false });
 
   if (prevStop) {
     const prevIcon = L.divIcon({
-      html: `<div style="width:13px;height:13px;border-radius:50%;background:#9E9890;border:2px solid #fff;box-shadow:0 1px 4px rgba(0,0,0,0.25)"></div>`,
-      className: '', iconSize: [13, 13], iconAnchor: [6, 6], popupAnchor: [0, -9],
+      html: `<div style="width:12px;height:12px;border-radius:50%;background:#8C8E93;border:2px solid #fff"></div>`,
+      className: '', iconSize: [12, 12], iconAnchor: [6, 6], popupAnchor: [0, -8],
     });
     L.marker(prevStop.coords, { icon: prevIcon }).addTo(map)
-      .bindPopup(`<strong>${prevStop.name}</strong><br><small style="color:#9E9890">Vorige stop</small>`, { closeButton: false });
+      .bindPopup(`<strong>${prevStop.name}</strong>`, { closeButton: false });
 
     L.polyline([prevStop.coords, stop.coords], {
-      color: '#FF8A3D', weight: 3.5, opacity: 0.75, dashArray: '7, 10',
+      color: '#C9302C', weight: 3, opacity: 0.7, dashArray: '6, 8',
     }).addTo(map);
 
-    map.fitBounds(L.latLngBounds([prevStop.coords, stop.coords]), { padding: [36, 36] });
+    map.fitBounds(L.latLngBounds([prevStop.coords, stop.coords]), { padding: [30, 30] });
   } else {
     map.setView(stop.coords, 16);
   }
@@ -373,120 +431,239 @@ function mapsDirectionsUrl(idx) {
   return `https://www.google.com/maps/search/?api=1&query=${stop.coords[0]},${stop.coords[1]}`;
 }
 
-// ── RENDER ──
+// ════════════════════════════════════════════════════════════
+// RENDER
+// ════════════════════════════════════════════════════════════
+
 function render() {
-  if (phase === 'finish') {
-    progressEl.textContent = 'Voltooid!';
-    renderFinish();
-    return;
-  }
-
-  const stop = STOPS[currentIdx];
-  progressEl.textContent = `Stop ${currentIdx + 1} van ${STOPS.length}`;
-
-  if      (phase === 'travel') renderTravel(stop);
-  else if (phase === 'info')   renderInfo(stop);
-  else if (phase === 'task')   renderTask(stop);
-  else if (phase === 'done')   renderDone(stop);
+  stage.scrollTop = 0;
+  if      (phase === 'list')   renderList();
+  else if (phase === 'travel') renderTravel(STOPS[currentIdx]);
+  else if (phase === 'info')   renderInfo(STOPS[currentIdx]);
+  else if (phase === 'task')   renderTask(STOPS[currentIdx]);
+  else if (phase === 'finish') renderFinish();
 }
 
+// ── JOB LIST ──
+function renderList() {
+  setHeader('Job List');
+
+  const rowsHtml = STOPS.map((s, i) => {
+    const done     = isDone(s.id);
+    const current  = i === currentIdx && !done;
+    const locked   = i > currentIdx && !done;
+    const stars    = starsByStop[s.id] || 0;
+    const skippedHere = skipped.includes(s.id) && !solved.includes(s.id);
+
+    let cls = 'jl-row';
+    if (done)    cls += ' jl-row--done';
+    if (current) cls += ' jl-row--current';
+    if (locked)  cls += ' jl-row--locked';
+
+    let statusHtml;
+    if (done) {
+      if (skippedHere && stars === 0) statusHtml = `<span class="jl-status">○</span>`;
+      else statusHtml = `<span class="jl-status jl-status--done">${'★'.repeat(stars)}${'☆'.repeat(3 - stars)}</span>`;
+    } else if (current) {
+      statusHtml = `<span class="jl-status jl-status--current">▶</span>`;
+    } else {
+      statusHtml = `<span class="jl-status">🔒</span>`;
+    }
+
+    return `
+      <div class="${cls}" data-idx="${i}">
+        <div class="jl-avatar" style="background:${STOP_COLORS[s.id] || '#3A6BD8'};">${s.emoji}</div>
+        <div class="jl-body">
+          <div class="jl-title">${escapeHtml(s.name)}</div>
+          <div class="jl-sub">Stop ${i + 1} · ${s.questions.length} vragen</div>
+        </div>
+        ${statusHtml}
+      </div>
+    `;
+  }).join('');
+
+  stage.innerHTML = `<div class="jl-list">${rowsHtml}</div>`;
+
+  stage.querySelectorAll('.jl-row').forEach(row => {
+    row.addEventListener('click', () => {
+      const idx = parseInt(row.dataset.idx, 10);
+      const stop = STOPS[idx];
+      if (isLocked(stop.id)) {
+        return showToast('🔒 Voltooi eerst de vorige stop');
+      }
+      currentIdx = idx;
+      hintsShown = 0;
+      hintsUsedThisStop = 0;
+      currentQuestionIdx = 0;
+      stopCorrect = 0;
+      perQuestionState = {};
+      duoPhase = 'role-select';
+      duoRole = null;
+      taskView = 'list';
+      phase = isDone(stop.id) ? 'info' : 'travel';
+      ensureStartTime();
+      saveProgress();
+      render();
+    });
+  });
+}
+
+// ── TRAVEL ──
 function renderTravel(stop) {
-  const idx      = currentIdx;
-  const prevStop = idx > 0 ? STOPS[idx - 1] : null;
+  setHeader(stop.name);
+  const prevStop = currentIdx > 0 ? STOPS[currentIdx - 1] : null;
   const dirLabel = prevStop
-    ? `🗺️ &nbsp;Route vanaf ${escapeHtml(prevStop.name)}`
-    : `📍 &nbsp;Bekijk op Google Maps`;
+    ? `🚇 Route vanaf ${escapeHtml(prevStop.name)}`
+    : `📍 Bekijk op Google Maps`;
 
   stage.innerHTML = `
-    <div class="hunt-card">
-      <div class="hunt-card-blob"></div>
-      <div class="stop-num">Stop ${idx + 1} van ${STOPS.length}</div>
-      <div class="stop-emoji">${stop.emoji}</div>
-      <div class="stop-name">${escapeHtml(stop.name)}</div>
-      <div class="stop-desc">${escapeHtml(stop.desc)}</div>
-      <div id="stopMap" class="stop-map"></div>
-      <a href="${mapsDirectionsUrl(idx)}" target="_blank" rel="noopener" class="btn-directions">
-        ${dirLabel}
-      </a>
-      <div class="travel-tip">
-        <strong>Hoe kom je er:</strong>&nbsp;${escapeHtml(stop.travelTip)}
+    <div class="jl-page">
+      <div id="stopMap" class="jl-map"></div>
+
+      <div class="jl-section-label">Hoe kom je er</div>
+      <div class="jl-text">${escapeHtml(stop.travelTip)}</div>
+
+      <div class="jl-actions">
+        <a href="${mapsDirectionsUrl(currentIdx)}" target="_blank" rel="noopener" class="jl-btn jl-btn--blue">
+          ${dirLabel}
+        </a>
+        <button class="jl-btn jl-btn--green" id="btnHere">📍 Ik ben hier</button>
       </div>
-      <button class="btn-primary btn-full" id="btnHere">📍 &nbsp;Ik ben hier</button>
     </div>
   `;
 
-  initMap(idx);
+  initMap(currentIdx);
 
   document.getElementById('btnHere').addEventListener('click', () => {
-    hintsShown         = 0;
+    hintsShown = 0;
     currentQuestionIdx = 0;
-    stopCorrect        = 0;
-    duoPhase           = 'role-select';
-    duoRole            = null;
-    phase              = 'info';
+    stopCorrect = 0;
+    hintsUsedThisStop = 0;
+    perQuestionState = {};
+    duoPhase = 'role-select';
+    duoRole = null;
+    phase = 'info';
     render();
   });
 }
 
+// ── INFO ──
 function renderInfo(stop) {
+  setHeader(stop.name);
   stage.innerHTML = `
-    <div class="hunt-card">
-      <div class="hunt-card-blob"></div>
-      <div class="stop-num">Stop ${currentIdx + 1} van ${STOPS.length}</div>
-      <div class="stop-emoji">${stop.emoji}</div>
-      <div class="stop-name">${escapeHtml(stop.name)}</div>
-      <div class="stop-info">${escapeHtml(stop.info)}</div>
-      <button class="btn-primary btn-full" id="btnStartQuestions">Laten we beginnen →</button>
+    <div class="jl-page">
+      <div class="jl-hero">
+        <div class="jl-hero-emoji">${stop.emoji}</div>
+        <div class="jl-hero-name">${escapeHtml(stop.name)}</div>
+      </div>
+      <div class="jl-section-label">Briefing</div>
+      <div class="jl-text">${escapeHtml(stop.info)}</div>
+      <div class="jl-actions">
+        <button class="jl-btn jl-btn--blue" id="btnStart">Laten we beginnen →</button>
+      </div>
     </div>
   `;
 
-  document.getElementById('btnStartQuestions').addEventListener('click', () => {
+  document.getElementById('btnStart').addEventListener('click', () => {
+    taskView = 'list';
     phase = 'task';
     render();
   });
 }
 
+// ── TASK PHASE (sub-views) ──
 function renderTask(stop) {
-  const q = stop.questions[currentQuestionIdx];
-  if (q.type === 'duo') { renderDuoPhase(stop, q); return; }
+  if (taskView === 'list')   renderTaskList(stop);
+  else if (taskView === 'detail') renderTaskDetail(stop);
+}
 
-  const qNum   = currentQuestionIdx + 1;
-  const qTotal = stop.questions.length;
+function renderTaskList(stop) {
+  setHeader(stop.name);
 
-  const dotsHtml = stop.questions.map((_, i) => {
-    if (i < currentQuestionIdx)  return `<span class="qdot qdot--done"></span>`;
-    if (i === currentQuestionIdx) return `<span class="qdot qdot--active"></span>`;
-    return `<span class="qdot"></span>`;
+  const rowsHtml = stop.questions.map((q, i) => {
+    const state = perQuestionState[`${stop.id}_${i}`];
+    const isCurrent = i === currentQuestionIdx && !state;
+    const isLocked  = i > currentQuestionIdx && !state;
+
+    let cls = 'jl-row';
+    if (state === 'done')    cls += ' jl-row--done';
+    if (state === 'skipped') cls += '';
+    if (isCurrent)           cls += ' jl-row--current';
+    if (isLocked)            cls += ' jl-row--locked';
+
+    let status;
+    if (state === 'done')         status = `<span class="jl-status jl-status--done">✓</span>`;
+    else if (state === 'skipped') status = `<span class="jl-status">⏭</span>`;
+    else if (isCurrent)           status = `<span class="jl-status jl-status--current">▶</span>`;
+    else                          status = `<span class="jl-status">🔒</span>`;
+
+    const preview = q.type === 'duo' ? '🕵️ Duo-missie' : truncate(q.task, 38);
+
+    return `
+      <div class="${cls}" data-q="${i}">
+        <div class="jl-avatar jl-avatar--num" style="background:${STOP_COLORS[stop.id]};">${i + 1}</div>
+        <div class="jl-body">
+          <div class="jl-title">Vraag ${i + 1}</div>
+          <div class="jl-sub">${escapeHtml(preview)}</div>
+        </div>
+        ${status}
+      </div>
+    `;
   }).join('');
 
+  stage.innerHTML = `
+    <div class="jl-list">${rowsHtml}</div>
+  `;
+
+  stage.querySelectorAll('.jl-row').forEach(row => {
+    row.addEventListener('click', () => {
+      const i = parseInt(row.dataset.q, 10);
+      const state = perQuestionState[`${stop.id}_${i}`];
+      const isCurrent = i === currentQuestionIdx && !state;
+      if (!isCurrent && !state) return; // locked
+      currentQuestionIdx = i;
+      hintsShown = 0;
+      duoPhase = 'role-select';
+      duoRole = null;
+      taskView = 'detail';
+      render();
+    });
+  });
+}
+
+function truncate(str, n) { return str.length <= n ? str : str.slice(0, n - 1) + '…'; }
+
+function renderTaskDetail(stop) {
+  const q = stop.questions[currentQuestionIdx];
+  setHeader(`${stop.name} · Vraag ${currentQuestionIdx + 1}/${stop.questions.length}`);
+
+  if (q.type === 'duo') {
+    renderDuoPhase(stop, q);
+    return;
+  }
+
+  renderQuestionForm(stop, q);
+}
+
+function renderQuestionForm(stop, q) {
   const hintsHtml = q.hints.slice(0, hintsShown).map(h =>
-    `<div class="hint-box">💡 ${escapeHtml(h)}</div>`
+    `<div class="jl-hint">💡 ${escapeHtml(h)}</div>`
   ).join('');
 
-  const hintBtn = hintsShown < q.hints.length
-    ? `<button class="btn-hint" id="btnHint">💡 Hint (${hintsShown + 1}/${q.hints.length})</button>`
+  const hintBtnHtml = hintsShown < q.hints.length
+    ? `<button class="jl-btn jl-btn--grey" id="btnHint">💡 Hint (${hintsShown + 1}/${q.hints.length})</button>`
     : '';
 
   stage.innerHTML = `
-    <div class="hunt-card">
-      <div class="hunt-card-blob"></div>
-
-      <div class="q-progress-row">
-        <div class="q-dots">${dotsHtml}</div>
-        <span class="q-step-label">Vraag ${qNum} van ${qTotal}</span>
-      </div>
-
-      <div class="stop-num">Stop ${currentIdx + 1} van ${STOPS.length} · ${escapeHtml(stop.name)}</div>
-
-      <div class="task-section">
-        <div class="task-label">Jouw opdracht</div>
-        <div class="task-question">${escapeHtml(q.task)}</div>
-        ${hintsHtml}
-        <input type="text" class="task-input" id="taskInput" placeholder="Typ je antwoord..." autocomplete="off" />
-        <div class="btn-row">
-          <button class="btn-ghost" id="btnSkip">Overslaan</button>
-          ${hintBtn}
-          <button class="btn-primary" id="btnSubmit">Controleer</button>
+    <div class="jl-page">
+      <div class="jl-question">${escapeHtml(q.task)}</div>
+      ${hintsHtml}
+      <div class="jl-actions">
+        <input type="text" class="jl-input" id="taskInput" placeholder="Typ je antwoord..." autocomplete="off" />
+        ${hintBtnHtml}
+        <div class="jl-btn-row">
+          <button class="jl-btn jl-btn--red" id="btnSkip">Overslaan</button>
+          <button class="jl-btn jl-btn--green" id="btnSubmit">Controleer</button>
         </div>
       </div>
     </div>
@@ -502,18 +679,15 @@ function renderTask(stop) {
 
   submit.addEventListener('click', () => {
     if (checkAnswer(input.value, q.answerKeywords)) {
-      // Visual feedback before showing success screen
-      input.style.borderColor = '#34D399';
-      input.style.boxShadow   = '0 0 0 4px rgba(52,211,153,0.18)';
+      input.classList.add('is-correct');
       submit.textContent = '✓ Correct!';
-      submit.style.background = 'linear-gradient(135deg, #34D399, #06B6D4)';
       submit.disabled = true;
-      skip.disabled   = true;
+      skip.disabled = true;
       if (hint) hint.disabled = true;
-
       setTimeout(() => {
         stopCorrect++;
-        renderQuestionSuccess(stop, q);
+        perQuestionState[`${stop.id}_${currentQuestionIdx}`] = 'done';
+        advanceQuestion(stop, q);
       }, 600);
     } else {
       input.classList.remove('shake');
@@ -523,20 +697,87 @@ function renderTask(stop) {
   });
 
   skip.addEventListener('click', () => {
+    perQuestionState[`${stop.id}_${currentQuestionIdx}`] = 'skipped';
     hintsShown = 0;
-    advanceQuestion(stop);
+    advanceQuestion(stop, q);
   });
 
   if (hint) {
     hint.addEventListener('click', () => {
       hintsShown++;
-      renderTask(stop);
-      document.getElementById('taskInput').focus();
+      hintsUsedThisStop++;
+      renderTaskDetail(stop);
     });
   }
 }
 
-// ── DUO MISSION ──
+function advanceQuestion(stop) {
+  // After a question is answered or skipped, go back to the task list view
+  // so the user sees the progress, then if all questions done, complete the stop
+  const allAnswered = stop.questions.every((_, i) => perQuestionState[`${stop.id}_${i}`]);
+  hintsShown = 0;
+  if (allAnswered) {
+    finishStop(stop);
+  } else {
+    // Advance currentQuestionIdx to the next unanswered question
+    for (let i = 0; i < stop.questions.length; i++) {
+      if (!perQuestionState[`${stop.id}_${i}`]) {
+        currentQuestionIdx = i;
+        break;
+      }
+    }
+    taskView = 'list';
+    duoPhase = 'role-select';
+    duoRole = null;
+    render();
+  }
+}
+
+function finishStop(stop) {
+  const total = stop.questions.length;
+  const stars = calcStars(stopCorrect, total, hintsUsedThisStop);
+  starsByStop[stop.id] = stars;
+
+  // Determine solved vs skipped
+  if (!solved.includes(stop.id) && !skipped.includes(stop.id)) {
+    if (stopCorrect === total) solved.push(stop.id);
+    else skipped.push(stop.id);
+  }
+
+  // Advance currentIdx if this was the current stop
+  const idx = stopIndexById(stop.id);
+  if (idx === currentIdx) currentIdx++;
+
+  saveProgress();
+
+  // Brief done flash, then return to Job List
+  setHeader('Stop voltooid');
+  const headlineWord = stopCorrect === 0 ? 'Overgeslagen' : 'Voltooid!';
+  const sub = stopCorrect === total
+    ? `Alle ${total} vragen correct.`
+    : stopCorrect === 0
+      ? 'Door naar de volgende.'
+      : `${stopCorrect} van ${total} vragen correct.`;
+
+  stage.innerHTML = `
+    <div class="jl-done-flash">
+      <div class="jl-done-flash-check">${stopCorrect === 0 ? '→' : '✓'}</div>
+      <div class="jl-done-flash-title">Missie ${headlineWord}</div>
+      <div class="jl-done-flash-msg">${escapeHtml(sub)}</div>
+    </div>
+  `;
+
+  setTimeout(() => {
+    if (currentIdx >= STOPS.length) {
+      phase = 'finish';
+    } else {
+      phase = 'list';
+    }
+    render();
+  }, 1400);
+}
+
+// ── DUO MISSION (flat iFruijt style) ──
 function renderDuoPhase(stop, q) {
   if      (duoPhase === 'role-select') renderDuoRoleSelect(stop, q);
   else if (duoPhase === 'clues')       renderDuoClues(stop, q);
@@ -544,47 +785,31 @@ function renderDuoPhase(stop, q) {
 }
 
 function renderDuoRoleSelect(stop, q) {
-  const qNum   = currentQuestionIdx + 1;
-  const qTotal = stop.questions.length;
-
-  const dotsHtml = stop.questions.map((_, i) => {
-    if (i < currentQuestionIdx)   return `<span class="qdot qdot--done"></span>`;
-    if (i === currentQuestionIdx) return `<span class="qdot qdot--active"></span>`;
-    return `<span class="qdot"></span>`;
-  }).join('');
-
   stage.innerHTML = `
-    <div class="hunt-card">
-      <div class="hunt-card-blob" style="background:linear-gradient(135deg,#FF6B6B,#5B7CFF);"></div>
-
-      <div class="q-progress-row">
-        <div class="q-dots">${dotsHtml}</div>
-        <span class="q-step-label">Vraag ${qNum} van ${qTotal}</span>
+    <div class="jl-page">
+      <div class="jl-duo-header">
+        <div class="jl-duo-title">🕵️ Geheime Missie</div>
+        <div class="jl-duo-sub">Elk kiest een rol op zijn eigen telefoon</div>
       </div>
-
-      <div class="duo-header">
-        <div class="duo-title">🕵️ Geheime Missie</div>
-        <div class="duo-subtitle">Elk kiest een rol op zijn eigen telefoon</div>
-      </div>
-
-      <div class="duo-role-grid">
-        <button class="duo-role-btn duo-role-btn--p1" data-role="player1">
-          <span class="duo-role-icon">🔴</span>
+      <div class="jl-duo-roles">
+        <button class="jl-duo-role jl-duo-role--p1" data-role="player1">
+          <span class="jl-duo-role-icon">🔴</span>
           Speler 1
         </button>
-        <button class="duo-role-btn duo-role-btn--p2" data-role="player2">
-          <span class="duo-role-icon">🔵</span>
+        <button class="jl-duo-role jl-duo-role--p2" data-role="player2">
+          <span class="jl-duo-role-icon">🔵</span>
           Speler 2
         </button>
       </div>
-
-      <p class="duo-instruction">Kies je rol en laat je scherm NIET zien aan de andere speler!</p>
+      <div class="jl-text" style="font-size:12px;color:var(--jl-text-muted);text-align:center;">
+        Kies je rol en laat je scherm NIET zien aan de andere speler!
+      </div>
     </div>
   `;
 
-  stage.querySelectorAll('.duo-role-btn').forEach(btn => {
+  stage.querySelectorAll('.jl-duo-role').forEach(btn => {
     btn.addEventListener('click', () => {
-      duoRole  = btn.dataset.role;
+      duoRole = btn.dataset.role;
       duoPhase = 'clues';
       renderDuoPhase(stop, q);
     });
@@ -592,37 +817,18 @@ function renderDuoRoleSelect(stop, q) {
 }
 
 function renderDuoClues(stop, q) {
-  const role    = q.roles[duoRole];
-  const badgeCls = duoRole === 'player1' ? 'duo-role-badge--p1' : 'duo-role-badge--p2';
-  const cluesHtml = role.clues.map(c => `<div class="duo-clue-box">${escapeHtml(c)}</div>`).join('');
-
-  const qNum   = currentQuestionIdx + 1;
-  const qTotal = stop.questions.length;
-
-  const dotsHtml = stop.questions.map((_, i) => {
-    if (i < currentQuestionIdx)   return `<span class="qdot qdot--done"></span>`;
-    if (i === currentQuestionIdx) return `<span class="qdot qdot--active"></span>`;
-    return `<span class="qdot"></span>`;
-  }).join('');
+  const role = q.roles[duoRole];
+  const badgeCls = duoRole === 'player1' ? 'jl-duo-badge--p1' : 'jl-duo-badge--p2';
+  const cluesHtml = role.clues.map(c => `<div class="jl-text" style="background:var(--jl-row);border-bottom:1px solid var(--jl-divider);">${escapeHtml(c)}</div>`).join('');
 
   stage.innerHTML = `
-    <div class="hunt-card">
-      <div class="hunt-card-blob" style="background:linear-gradient(135deg,#FF6B6B,#5B7CFF);"></div>
-
-      <div class="q-progress-row">
-        <div class="q-dots">${dotsHtml}</div>
-        <span class="q-step-label">Vraag ${qNum} van ${qTotal}</span>
-      </div>
-
-      <div style="text-align:center;">
-        <span class="duo-role-badge ${badgeCls}">${escapeHtml(role.label)}</span>
-      </div>
-
+    <div class="jl-page">
+      <span class="jl-duo-badge ${badgeCls}">${escapeHtml(role.label)}</span>
       ${cluesHtml}
-
-      <div class="duo-secret-warning">🤫 Laat dit scherm NIET zien aan de andere speler!</div>
-
-      <button class="btn-primary btn-full" id="btnReady">Ik ben klaar →</button>
+      <div class="jl-duo-warning">🤫 Laat dit scherm NIET zien aan de andere speler!</div>
+      <div class="jl-actions">
+        <button class="jl-btn jl-btn--blue" id="btnReady">Ik ben klaar →</button>
+      </div>
     </div>
   `;
 
@@ -633,227 +839,136 @@ function renderDuoClues(stop, q) {
 }
 
 function renderDuoAnswer(stop, q) {
-  const qNum   = currentQuestionIdx + 1;
-  const qTotal = stop.questions.length;
-
-  const dotsHtml = stop.questions.map((_, i) => {
-    if (i < currentQuestionIdx)   return `<span class="qdot qdot--done"></span>`;
-    if (i === currentQuestionIdx) return `<span class="qdot qdot--active"></span>`;
-    return `<span class="qdot"></span>`;
-  }).join('');
-
-  const hintsHtml = q.hints.slice(0, hintsShown).map(h =>
-    `<div class="hint-box">💡 ${escapeHtml(h)}</div>`
-  ).join('');
-
-  const hintBtn = hintsShown < q.hints.length
-    ? `<button class="btn-hint" id="btnHint">💡 Hint (${hintsShown + 1}/${q.hints.length})</button>`
-    : '';
-
-  stage.innerHTML = `
-    <div class="hunt-card">
-      <div class="hunt-card-blob" style="background:linear-gradient(135deg,#FF6B6B,#5B7CFF);"></div>
-
-      <div class="q-progress-row">
-        <div class="q-dots">${dotsHtml}</div>
-        <span class="q-step-label">Vraag ${qNum} van ${qTotal}</span>
-      </div>
-
-      <div class="task-section">
-        <div class="task-label">Gecombineerd antwoord</div>
-        <div class="task-question">${escapeHtml(q.task)}</div>
-        ${hintsHtml}
-        <input type="text" class="task-input" id="taskInput" placeholder="Typ het antwoord..." autocomplete="off" />
-        <div class="btn-row">
-          <button class="btn-ghost" id="btnSkip">Overslaan</button>
-          ${hintBtn}
-          <button class="btn-primary" id="btnSubmit">Controleer</button>
-        </div>
-      </div>
-    </div>
-  `;
-
-  const input  = document.getElementById('taskInput');
-  const submit = document.getElementById('btnSubmit');
-  const skip   = document.getElementById('btnSkip');
-  const hint   = document.getElementById('btnHint');
-
-  input.focus();
-  input.addEventListener('keydown', e => { if (e.key === 'Enter') submit.click(); });
-
-  submit.addEventListener('click', () => {
-    if (checkAnswer(input.value, q.answerKeywords)) {
-      input.style.borderColor = '#34D399';
-      input.style.boxShadow   = '0 0 0 4px rgba(52,211,153,0.18)';
-      submit.textContent = '✓ Correct!';
-      submit.style.background = 'linear-gradient(135deg, #34D399, #06B6D4)';
-      submit.disabled = true;
-      skip.disabled   = true;
-      if (hint) hint.disabled = true;
-      setTimeout(() => {
-        stopCorrect++;
-        renderQuestionSuccess(stop, q);
-      }, 600);
-    } else {
-      input.classList.remove('shake');
-      void input.offsetWidth;
-      input.classList.add('shake');
-    }
-  });
-
-  skip.addEventListener('click', () => {
-    hintsShown = 0;
-    advanceQuestion(stop);
-  });
-
-  if (hint) {
-    hint.addEventListener('click', () => {
-      hintsShown++;
-      renderDuoPhase(stop, q);
-    });
-  }
+  // For duo, reuse the standard question form but show the combined question
+  renderQuestionForm(stop, q);
 }
 
-// Shown after each correct answer; has a "next" button so successMsg is always visible
-function renderQuestionSuccess(stop, q) {
-  const isLastQuestion = currentQuestionIdx === stop.questions.length - 1;
-  const qNum   = currentQuestionIdx + 1;
-  const qTotal = stop.questions.length;
-
-  const dotsHtml = stop.questions.map((_, i) => {
-    if (i <= currentQuestionIdx) return `<span class="qdot qdot--done"></span>`;
-    return `<span class="qdot"></span>`;
-  }).join('');
-
-  stage.innerHTML = `
-    <div class="hunt-card">
-      <div class="hunt-card-blob" style="background:linear-gradient(135deg,#34D399,#06B6D4);"></div>
-
-      <div class="q-progress-row">
-        <div class="q-dots">${dotsHtml}</div>
-        <span class="q-step-label">Vraag ${qNum} van ${qTotal}</span>
-      </div>
-
-      <div class="done-state" style="padding-top:12px;">
-        <div class="done-check">✓</div>
-        <div class="done-title">Correct!</div>
-        <div class="done-msg">${escapeHtml(q.successMsg)}</div>
-        <button class="btn-primary success btn-full" id="btnNextQ">
-          ${isLastQuestion ? 'Stop afronden →' : 'Volgende vraag →'}
-        </button>
-      </div>
-    </div>
-  `;
-
-  document.getElementById('btnNextQ').addEventListener('click', () => {
-    hintsShown = 0;
-    advanceQuestion(stop);
-  });
-}
-
-function advanceQuestion(stop) {
-  currentQuestionIdx++;
-
-  if (currentQuestionIdx >= stop.questions.length) {
-    // All questions for this stop are done
-    if (stopCorrect === stop.questions.length) {
-      solved.push(stop.id);
-    } else {
-      skipped.push(stop.id);
-    }
-    saveProgress();
-    phase = 'done';
-    render();
-  } else {
-    duoPhase = 'role-select';
-    duoRole  = null;
-    renderTask(stop);
-  }
-}
-
-function renderDone(stop) {
-  const allCorrect  = stopCorrect === stop.questions.length;
-  const noneCorrect = stopCorrect === 0;
-  const isLast      = currentIdx === STOPS.length - 1;
-
-  const title = allCorrect  ? 'Stop voltooid! 🎉'
-              : noneCorrect ? 'Stop overgeslagen'
-              : 'Gedeeltelijk voltooid';
-
-  const msg = allCorrect  ? 'Alle vragen goed beantwoord. Indrukwekkend!'
-            : noneCorrect ? 'Geen probleem — door naar de volgende locatie.'
-            : `${stopCorrect} van ${stop.questions.length} vragen correct beantwoord.`;
-
-  stage.innerHTML = `
-    <div class="hunt-card">
-      <div class="hunt-card-blob" style="background:${allCorrect ? 'linear-gradient(135deg,#34D399,#06B6D4)' : 'var(--surface-soft)'};"></div>
-      <div class="done-state">
-        <div class="done-check" style="${noneCorrect ? 'background:var(--surface-soft);color:var(--text-muted);box-shadow:none;border:1.5px solid var(--border)' : ''}">
-          ${noneCorrect ? '→' : '✓'}
-        </div>
-        <div class="done-title">${title}</div>
-        <div class="done-msg">${escapeHtml(msg)}</div>
-        <button class="btn-primary success btn-full" id="btnNext">
-          ${isLast ? '🎉 Speurtocht afronden' : 'Volgende stop →'}
-        </button>
-      </div>
-    </div>
-  `;
-
-  document.getElementById('btnNext').addEventListener('click', () => {
-    currentIdx++;
-    saveProgress();
-    if (currentIdx >= STOPS.length) {
-      phase = 'finish';
-    } else {
-      phase              = 'travel';
-      currentQuestionIdx = 0;
-      stopCorrect        = 0;
-      hintsShown         = 0;
-      duoPhase           = 'role-select';
-      duoRole            = null;
-    }
-    render();
-  });
-}
-
+// ── FINISH ──
 function renderFinish() {
-  stage.innerHTML = `
-    <div class="finish-card">
-      <div class="finish-emoji">🎉</div>
-      <div class="finish-title">Taipei veroverd!</div>
-      <div class="finish-msg">Zeven stops, één onvergetelijke dag. Van het grandioze plein bij het CKS Memorial tot een zonsondergang boven de skyline op de Olifantenberg.</div>
-      <div class="finish-stats">
-        <div class="stat-pill"><strong>${solved.length}</strong> volledig opgelost</div>
-        <div class="stat-pill"><strong>${skipped.length}</strong> overgeslagen</div>
-        <div class="stat-pill"><strong>${STOPS.length}</strong> stops</div>
+  setHeader('Taipei Voltooid');
+  const totalStars = Object.values(starsByStop).reduce((s, x) => s + x, 0);
+  const maxStars = STOPS.length * 3;
+  const elapsed = startTime ? Date.now() - startTime : 0;
+  const timeStr = elapsed > 0 ? formatDuration(elapsed) : '—';
+
+  const rowsHtml = STOPS.map((s) => {
+    const stars = starsByStop[s.id] || 0;
+    return `
+      <div class="jl-row">
+        <div class="jl-avatar" style="background:${STOP_COLORS[s.id]};">${s.emoji}</div>
+        <div class="jl-body">
+          <div class="jl-title">${escapeHtml(s.name)}</div>
+          <div class="jl-sub">${stars > 0 ? '★'.repeat(stars) + '☆'.repeat(3 - stars) : 'Overgeslagen'}</div>
+        </div>
       </div>
-      <button class="btn-primary btn-full" id="btnReset">Opnieuw beginnen</button>
+    `;
+  }).join('');
+
+  stage.innerHTML = `
+    <div class="jl-page">
+      <div class="jl-finish-totals">
+        <div class="jl-finish-totals-stars">${totalStars} / ${maxStars} ★</div>
+        <div class="jl-finish-totals-sub">Tijd: ${timeStr} · ${solved.length} opgelost · ${skipped.length} overgeslagen</div>
+      </div>
+      <div class="jl-section-label">Alle stops</div>
+      <div class="jl-list">${rowsHtml}</div>
+      <div class="jl-actions">
+        <button class="jl-btn jl-btn--red" id="btnReset">Opnieuw beginnen</button>
+      </div>
     </div>
   `;
 
-  document.getElementById('btnReset').addEventListener('click', () => {
-    currentIdx         = 0;
-    hintsShown         = 0;
-    currentQuestionIdx = 0;
-    stopCorrect        = 0;
-    duoPhase           = 'role-select';
-    duoRole            = null;
-    skipped            = [];
-    solved             = [];
-    phase              = 'travel';
-    saveProgress();
-    render();
-  });
+  document.getElementById('btnReset').addEventListener('click', () => doReset());
 }
 
-render();
+// ── TOAST ──
+function showToast(msg) {
+  let toast = document.getElementById('jl-toast');
+  if (!toast) {
+    toast = document.createElement('div');
+    toast.id = 'jl-toast';
+    Object.assign(toast.style, {
+      position:'fixed', bottom:'90px', left:'50%', transform:'translateX(-50%)',
+      background:'rgba(10,11,14,0.95)', color:'#fff',
+      padding:'10px 18px', borderRadius:'999px', fontSize:'13px', fontWeight:'600',
+      zIndex:'500', boxShadow:'0 8px 24px rgba(0,0,0,0.6)',
+      border:'1px solid rgba(255,255,255,0.15)',
+      opacity:'0', transition:'opacity 0.2s', pointerEvents:'none',
+    });
+    document.body.appendChild(toast);
+  }
+  toast.textContent = msg;
+  toast.style.opacity = '1';
+  clearTimeout(toast._t);
+  toast._t = setTimeout(() => { toast.style.opacity = '0'; }, 1800);
+}
 
-document.getElementById('btnResetProgress').addEventListener('click', () => {
-  if (confirm('Voortgang wissen en opnieuw beginnen?')) {
-    localStorage.removeItem(STORAGE_KEY);
-    localStorage.removeItem('taipei_skipped');
-    localStorage.removeItem('taipei_solved');
-    location.reload();
+// ── RESET ──
+function doReset() {
+  localStorage.removeItem(STORAGE_KEY);
+  localStorage.removeItem('taipei_skipped');
+  localStorage.removeItem('taipei_solved');
+  localStorage.removeItem('taipei_stars');
+  localStorage.removeItem('taipei_start_ts');
+  location.reload();
+}
+
+// ── BOTTOM 3-BUTTON ROW ──
+document.getElementById('btnReset').addEventListener('click', () => {
+  if (confirm('Voortgang wissen en opnieuw beginnen?')) doReset();
+});
+
+document.getElementById('btnJump').addEventListener('click', () => {
+  if (phase === 'finish') {
+    showToast('Klaar — alles voltooid!');
+    return;
+  }
+  // Jump to the current incomplete stop
+  if (currentIdx >= STOPS.length) {
+    phase = 'finish';
+  } else {
+    phase = 'travel';
+  }
+  hintsShown = 0;
+  hintsUsedThisStop = 0;
+  currentQuestionIdx = 0;
+  stopCorrect = 0;
+  perQuestionState = {};
+  duoPhase = 'role-select';
+  duoRole = null;
+  taskView = 'list';
+  render();
+});
+
+document.getElementById('btnBack').addEventListener('click', () => {
+  if (phase === 'list' || phase === 'finish') {
+    window.location.href = '../index.html';
+    return;
+  }
+  if (phase === 'task' && taskView === 'detail') {
+    taskView = 'list';
+    hintsShown = 0;
+    duoPhase = 'role-select';
+    duoRole = null;
+    render();
+    return;
+  }
+  if (phase === 'task') {
+    phase = 'info';
+    render();
+    return;
+  }
+  if (phase === 'info') {
+    phase = 'travel';
+    render();
+    return;
+  }
+  if (phase === 'travel') {
+    phase = 'list';
+    render();
+    return;
   }
 });
+
+// ── INIT ──
+render();

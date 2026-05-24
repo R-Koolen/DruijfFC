@@ -2,64 +2,124 @@
 <html lang="nl">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Druijfhartig</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="theme-color" content="#0A0B0E" />
+  <title>Druijfhartig — iFruijt</title>
   <link rel="stylesheet" href="../main.css" />
   <link rel="stylesheet" href="questions.css" />
 </head>
 <body>
 
-<div class="q-page page-enter">
+<div class="ifruit-shell">
 
-  <!-- Header -->
-  <header class="q-header">
-    <button class="btn-back" onclick="window.location.href='../index.html'" aria-label="Terug">
-      <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
-        <path d="M11 4L6 9L11 14" stroke="#15171F" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+  <!-- TOP CHROME STRIP — iFruijt wordmark -->
+  <div class="ifruit-top">
+    <div class="ifruit-brand">
+      <svg class="ifruit-apple" viewBox="0 0 16 18" aria-hidden="true">
+        <path d="M11.5 1.5c.3 1.3-.2 2.5-.9 3.3-.7.9-1.8 1.5-2.9 1.4-.3-1.3.3-2.6 1-3.4.7-.8 1.9-1.4 2.8-1.3zM14.6 13.4c-.5 1.2-.8 1.7-1.5 2.7-1 1.4-2.4 3.2-4.1 3.2-1.5 0-1.9-1-3.9-1-2 0-2.5 1-4 1-1.7 0-3-1.6-4-3-2.7-4-3-8.7-1.3-11.2 1.2-1.8 3.1-2.8 4.9-2.8 1.8 0 3 1 4.5 1 1.5 0 2.4-1 4.5-1 1.6 0 3.3.9 4.5 2.3-4 2.2-3.3 7.9-.6 8.8z" fill="currentColor"/>
       </svg>
-    </button>
-    <div class="q-header-center">
-      <div class="q-header-title">Druijfhartig</div>
+      <span class="ifruit-wordmark">iFruijt</span>
     </div>
-    <div class="q-header-spacer"></div>
-  </header>
+  </div>
 
-  <!-- Stage -->
-  <div class="q-stage">
+  <!-- PHONE SCREEN -->
+  <div class="ifruit-screen">
 
-    <!-- Category badge -->
-    <div class="category-badge" id="catBadge"></div>
-
-    <!-- Question card -->
-    <div class="q-card-wrap">
-      <div class="q-card" id="qCard">
-        <div class="q-card-blob" id="qCardBlob"></div>
-        <div class="q-emoji" id="qEmoji"></div>
-        <div class="q-text"  id="qText"></div>
+    <!-- Status bar -->
+    <div class="ifruit-sb" aria-hidden="true">
+      <div class="sb-left">
+        <svg class="sb-signal" viewBox="0 0 18 14" fill="none">
+          <path d="M2 12 Q9 5 16 12" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
+          <path d="M4.5 12 Q9 7.5 13.5 12" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
+          <path d="M7 12 Q9 10 11 12" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
+          <circle cx="9" cy="12" r="1" fill="currentColor"/>
+        </svg>
+        <svg class="sb-cloud" viewBox="0 0 18 12" fill="none">
+          <path d="M4 10 Q1 10 1 7.5 Q1 5 3.5 5 Q4 3 6.5 3 Q9 3 9.5 5 Q13 5 13 7.5 Q13 10 10 10 Z" fill="currentColor"/>
+        </svg>
+      </div>
+      <div class="sb-center">
+        <span class="sb-day">Wo</span>
+        <span class="sb-dot">·</span>
+        <span class="sb-time">16:42</span>
+      </div>
+      <div class="sb-right">
+        <div class="sb-battery"><span class="sb-batt-fill"></span></div>
       </div>
     </div>
 
-  </div>
-
-  <!-- Action buttons -->
-  <div class="q-actions">
-    <div class="q-action-labels">
-      <span class="q-action-label">Ander onderwerp</span>
-      <span class="q-action-label">Zelfde sfeer</span>
+    <!-- Blue header bar -->
+    <div class="jl-header">
+      <span class="jl-header-title">Druijfhartig</span>
     </div>
 
-    <div class="q-buttons">
-      <button class="btn-action btn-skip" id="btnSkip" title="Ander onderwerp" aria-label="Ander onderwerp">
-        ✕
+    <!-- Category strip (color updated via JS) -->
+    <div class="q-cat-strip" id="catBadge"></div>
+
+    <!-- Message row container -->
+    <div class="q-msg-area">
+      <div class="q-msg-row" id="qCard">
+        <div class="q-msg-avatar" id="qCardBlob">
+          <span id="qEmoji"></span>
+        </div>
+        <div class="q-msg-body">
+          <div class="q-msg-name">Druijf</div>
+          <div class="q-msg-text" id="qText"></div>
+        </div>
+        <div class="q-msg-time">16:42</div>
+      </div>
+    </div>
+
+    <!-- Action buttons -->
+    <div class="q-actions">
+      <button class="q-btn q-btn-skip" id="btnSkip">
+        <span class="q-btn-icon">✕</span>
+        <span class="q-btn-label">Ander onderwerp</span>
       </button>
-      <button class="btn-action btn-next" id="btnNext" title="Zelfde sfeer" aria-label="Zelfde sfeer">
-        ✓
+      <button class="q-btn q-btn-next" id="btnNext">
+        <span class="q-btn-icon">✓</span>
+        <span class="q-btn-label">Zelfde sfeer</span>
       </button>
     </div>
+
   </div>
+
+  <!-- BOTTOM CHROME STRIP — 3-button row -->
+  <nav class="ifruit-bottom">
+    <button type="button" class="ifruit-btn ifruit-btn--side" id="btnSearch" aria-label="Zoeken">
+      <svg viewBox="0 0 24 24" fill="none">
+        <circle cx="11" cy="11" r="6.5" stroke="currentColor" stroke-width="2"/>
+        <path d="M15.5 15.5L20 20" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+      </svg>
+    </button>
+
+    <button type="button" class="ifruit-btn ifruit-btn--plus" id="btnPlus" aria-label="Nieuw">
+      <svg viewBox="0 0 24 24" fill="none">
+        <path d="M12 5v14M5 12h14" stroke="#fff" stroke-width="3.4" stroke-linecap="round"/>
+      </svg>
+    </button>
+
+    <button type="button" class="ifruit-btn ifruit-btn--side ifruit-btn--back" id="btnBack" aria-label="Terug">
+      <svg viewBox="0 0 24 24" fill="none">
+        <path d="M20 12H5" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/>
+        <path d="M11 6l-6 6 6 6" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </button>
+  </nav>
 
 </div>
 
 <script src="questions.js"></script>
+<script>
+  document.getElementById('btnBack')?.addEventListener('click', () => {
+    window.location.href = '../index.html';
+  });
+  document.getElementById('btnSearch')?.addEventListener('click', () => {
+    // soft no-op
+  });
+  document.getElementById('btnPlus')?.addEventListener('click', () => {
+    document.getElementById('btnNext')?.click();
+  });
+</script>
 </body>
 </html>

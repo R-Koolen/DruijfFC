@@ -2,70 +2,157 @@
 <html lang="nl">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Druijf FC</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="theme-color" content="#0A0E14" />
+  <title>Druijf FC — iFruijt</title>
   <link rel="stylesheet" href="main.css" />
   <link rel="stylesheet" href="index.css" />
 </head>
 <body>
 
-<main class="home page-enter">
+<div class="ifruit-shell">
 
-  <header class="home-hero">
-    <div class="home-greeting">Hé daar <span class="wave">👋</span></div>
-    <h1 class="home-title">Welk spel doen we vanavond?</h1>
-  </header>
-
-  <div class="home-cards">
-
-    <!-- Schatzoeker -->
-    <a href="taipei/taipei.html" class="game-card game-card--treasure">
-      <div class="game-card-mascot">🗺️</div>
-      <div class="game-card-body">
-        <div class="game-card-eyebrow">Speurtocht</div>
-        <div class="game-card-title">Schatzoeker</div>
-        <div class="game-card-desc">7 stops door Taipei in één dag</div>
-      </div>
-      <div class="game-card-chevron" aria-hidden="true">
-        <svg width="22" height="22" viewBox="0 0 22 22" fill="none">
-          <path d="M8 5l6 6-6 6" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/>
-        </svg>
-      </div>
-    </a>
-
-    <!-- Druijfhartig (Questions) -->
-    <a href="questions/questions.html" class="game-card game-card--questions">
-      <div class="game-card-mascot">💬</div>
-      <div class="game-card-body">
-        <div class="game-card-eyebrow">Druijfhartig</div>
-        <div class="game-card-title">Vragen</div>
-        <div class="game-card-desc">Leer elkaar beter kennen</div>
-      </div>
-      <div class="game-card-chevron" aria-hidden="true">
-        <svg width="22" height="22" viewBox="0 0 22 22" fill="none">
-          <path d="M8 5l6 6-6 6" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/>
-        </svg>
-      </div>
-    </a>
-
-    <!-- Would You Rather (coming soon) -->
-    <div class="game-card game-card--wyr is-disabled" aria-disabled="true">
-      <div class="game-card-mascot">⚖️</div>
-      <div class="game-card-body">
-        <div class="game-card-eyebrow">Keuzespel</div>
-        <div class="game-card-title">Would You Rather</div>
-        <div class="game-card-desc">Onmogelijke keuzes maken</div>
-      </div>
-      <div class="game-card-soon">Binnenkort</div>
+  <!-- ── TOP CHROME STRIP — iFruijt wordmark ── -->
+  <div class="ifruit-top">
+    <div class="ifruit-brand">
+      <svg class="ifruit-apple" viewBox="0 0 16 18" aria-hidden="true">
+        <path d="M11.5 1.5c.3 1.3-.2 2.5-.9 3.3-.7.9-1.8 1.5-2.9 1.4-.3-1.3.3-2.6 1-3.4.7-.8 1.9-1.4 2.8-1.3zM14.6 13.4c-.5 1.2-.8 1.7-1.5 2.7-1 1.4-2.4 3.2-4.1 3.2-1.5 0-1.9-1-3.9-1-2 0-2.5 1-4 1-1.7 0-3-1.6-4-3-2.7-4-3-8.7-1.3-11.2 1.2-1.8 3.1-2.8 4.9-2.8 1.8 0 3 1 4.5 1 1.5 0 2.4-1 4.5-1 1.6 0 3.3.9 4.5 2.3-4 2.2-3.3 7.9-.6 8.8z" fill="currentColor"/>
+      </svg>
+      <span class="ifruit-wordmark">iFruijt</span>
     </div>
+  </div>
+
+  <!-- ── PHONE SCREEN ── -->
+  <div class="ifruit-screen">
+
+    <!-- Wallpaper -->
+    <div class="ifruit-wallpaper" aria-hidden="true">
+      <div class="ifruit-vignette"></div>
+      <svg class="ifruit-skyline" viewBox="0 0 430 200" preserveAspectRatio="xMidYMax slice">
+        <path d="M0,200 L0,140 L25,140 L25,110 L45,110 L45,140 L70,140 L70,90 L90,90 L90,60 L100,60 L100,90 L115,90 L115,130 L140,130 L140,100 L160,100 L160,70 L170,40 L180,70 L180,120 L200,120 L200,80 L220,80 L220,150 L240,150 L240,100 L260,100 L260,50 L275,50 L275,30 L290,30 L290,80 L310,80 L310,130 L330,130 L330,90 L350,90 L350,140 L380,140 L380,110 L405,110 L405,140 L430,140 L430,200 Z" fill="rgba(255,255,255,0.18)"/>
+      </svg>
+    </div>
+
+    <!-- iFruijt-accurate status bar -->
+    <div class="ifruit-sb" aria-hidden="true">
+      <div class="sb-left">
+        <svg class="sb-signal" viewBox="0 0 18 14" fill="none">
+          <path d="M2 12 Q9 5 16 12" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
+          <path d="M4.5 12 Q9 7.5 13.5 12" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
+          <path d="M7 12 Q9 10 11 12" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
+          <circle cx="9" cy="12" r="1" fill="currentColor"/>
+        </svg>
+        <svg class="sb-cloud" viewBox="0 0 18 12" fill="none">
+          <path d="M4 10 Q1 10 1 7.5 Q1 5 3.5 5 Q4 3 6.5 3 Q9 3 9.5 5 Q13 5 13 7.5 Q13 10 10 10 Z" fill="currentColor"/>
+        </svg>
+      </div>
+      <div class="sb-center">
+        <span class="sb-day">Wo</span>
+        <span class="sb-dot">·</span>
+        <span class="sb-time">16:42</span>
+      </div>
+      <div class="sb-right">
+        <div class="sb-battery">
+          <span class="sb-batt-fill"></span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Red title banner -->
+    <div class="ifruit-banner">
+      <div class="ifruit-banner-shine"></div>
+      <span class="ifruit-banner-text">Thuishaven</span>
+    </div>
+
+    <!-- App grid (3×2) -->
+    <main class="ifruit-grid">
+
+      <!-- Row 1: real apps -->
+      <a href="taipei/taipei.html" class="ifruit-app" data-game="treasure" aria-label="Schatzoeker">
+        <div class="ifruit-tile ifruit-tile--red">
+          <span class="ifruit-tile-shine"></span>
+          <span class="ifruit-badge">7</span>
+          <span class="ifruit-tile-glyph">🗺️</span>
+        </div>
+        <span class="ifruit-tile-label">Schatzoeker</span>
+      </a>
+
+      <a href="questions/questions.html" class="ifruit-app" data-game="questions" aria-label="Druijfhartig">
+        <div class="ifruit-tile ifruit-tile--blue">
+          <span class="ifruit-tile-shine"></span>
+          <span class="ifruit-badge">69</span>
+          <span class="ifruit-tile-glyph">💬</span>
+        </div>
+        <span class="ifruit-tile-label">Druijfhartig</span>
+      </a>
+
+      <a href="wyr/wyr.html" class="ifruit-app" data-game="wyr" aria-label="Would You Rather">
+        <div class="ifruit-tile ifruit-tile--wyr">
+          <span class="ifruit-tile-shine"></span>
+          <span class="ifruit-tile-glyph">📋</span>
+        </div>
+        <span class="ifruit-tile-label">WYR</span>
+      </a>
+
+      <!-- Row 2: decorative placeholder apps -->
+      <button type="button" class="ifruit-app ifruit-app--deco" data-toast="Fakka je wil deze camera gebruiken? Daan heeft z'n camera apart moeten inchecken zo groot is die" aria-label="Camera">
+        <div class="ifruit-tile ifruit-tile--silver">
+          <span class="ifruit-tile-shine"></span>
+          <span class="ifruit-tile-glyph">📷</span>
+        </div>
+        <span class="ifruit-tile-label">Camera</span>
+      </button>
+
+      <button type="button" class="ifruit-app ifruit-app--deco" data-toast="De vunzige filmpjes kijk je maar lekker op je eigen telefoon" aria-label="Browser">
+        <div class="ifruit-tile ifruit-tile--orange">
+          <span class="ifruit-tile-shine"></span>
+          <span class="ifruit-tile-glyph">🌐</span>
+        </div>
+        <span class="ifruit-tile-label">Browser</span>
+      </button>
+
+      <button type="button" class="ifruit-app ifruit-app--deco" data-toast="⚙️ Niks om in te stellen" aria-label="Instellingen">
+        <div class="ifruit-tile ifruit-tile--green">
+          <span class="ifruit-tile-shine"></span>
+          <span class="ifruit-tile-glyph">⚙️</span>
+        </div>
+        <span class="ifruit-tile-label">Instellingen</span>
+      </button>
+
+    </main>
 
   </div>
 
-  <footer class="home-foot">
-    <span>een echt kameradenmove — Druijf FC</span>
-  </footer>
+  <!-- ── BOTTOM CHROME STRIP — 3-button row ── -->
+  <nav class="ifruit-bottom" aria-label="iFruijt nav">
+    <button type="button" class="ifruit-btn ifruit-btn--side" id="btnSearch" aria-label="Zoeken">
+      <svg viewBox="0 0 24 24" fill="none">
+        <circle cx="11" cy="11" r="6.5" stroke="currentColor" stroke-width="2"/>
+        <path d="M15.5 15.5L20 20" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+      </svg>
+    </button>
 
-</main>
+    <button type="button" class="ifruit-btn ifruit-btn--plus" id="btnPlus" aria-label="Nieuw">
+      <svg viewBox="0 0 24 24" fill="none">
+        <path d="M12 5v14M5 12h14" stroke="#fff" stroke-width="3.4" stroke-linecap="round"/>
+      </svg>
+    </button>
+
+    <button type="button" class="ifruit-btn ifruit-btn--side ifruit-btn--back" id="btnBack" aria-label="Terug">
+      <svg viewBox="0 0 24 24" fill="none">
+        <path d="M20 12H5" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/>
+        <path d="M11 6l-6 6 6 6" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </button>
+  </nav>
+
+  <!-- Toast container -->
+  <div class="toast" id="toast"></div>
+
+  <!-- App-launch overlay -->
+  <div class="launch-overlay" id="launchOverlay" aria-hidden="true"></div>
+
+</div>
 
 <script src="index.js"></script>
 </body>

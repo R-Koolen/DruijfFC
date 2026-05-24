@@ -4,10 +4,9 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
   <meta name="theme-color" content="#0A0B0E" />
-  <title>Schatzoeker — iFruijt</title>
+  <title>Zou jij liever — iFruijt</title>
   <link rel="stylesheet" href="../main.css" />
-  <link rel="stylesheet" href="taipei.css" />
-  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <link rel="stylesheet" href="wyr.css" />
 </head>
 <body>
 
@@ -26,7 +25,7 @@
   <!-- PHONE SCREEN -->
   <div class="ifruit-screen">
 
-    <!-- iFruijt status bar -->
+    <!-- Status bar -->
     <div class="ifruit-sb" aria-hidden="true">
       <div class="sb-left">
         <svg class="sb-signal" viewBox="0 0 18 14" fill="none">
@@ -45,33 +44,54 @@
         <span class="sb-time">16:42</span>
       </div>
       <div class="sb-right">
-        <div class="sb-battery">
-          <span class="sb-batt-fill"></span>
-        </div>
+        <div class="sb-battery"><span class="sb-batt-fill"></span></div>
       </div>
     </div>
 
-    <!-- Blue header bar — title set dynamically -->
+    <!-- Blue header bar -->
     <div class="jl-header">
-      <span class="jl-header-title" id="jlHeaderTitle">Job List</span>
+      <span class="jl-header-title">Zou jij liever</span>
     </div>
 
-    <!-- Content area — populated by JS depending on phase -->
-    <div class="jl-stage" id="huntStage"></div>
+    <!-- Category strip (color updated via JS) -->
+    <div class="q-cat-strip" id="catBadge"></div>
+
+    <!-- WYR card area -->
+    <div class="wyr-area">
+      <div class="wyr-card" id="wyrCard">
+        <p class="wyr-prompt">Zou jij liever...</p>
+        <button class="wyr-option wyr-option--a" id="wyrOptA"></button>
+        <div class="wyr-or">— of —</div>
+        <button class="wyr-option wyr-option--b" id="wyrOptB"></button>
+      </div>
+    </div>
+
+    <!-- Action buttons -->
+    <div class="q-actions">
+      <button class="q-btn q-btn-skip" id="btnSkip">
+        <span class="q-btn-icon">✕</span>
+        <span class="q-btn-label">Ander onderwerp</span>
+      </button>
+      <button class="q-btn q-btn-next" id="btnNext">
+        <span class="q-btn-icon">✓</span>
+        <span class="q-btn-label">Zelfde sfeer</span>
+      </button>
+    </div>
 
   </div>
 
   <!-- BOTTOM CHROME STRIP — 3-button row -->
-  <nav class="ifruit-bottom" aria-label="iFruijt nav">
-    <button type="button" class="ifruit-btn ifruit-btn--side" id="btnReset" aria-label="Voortgang wissen">
+  <nav class="ifruit-bottom">
+    <button type="button" class="ifruit-btn ifruit-btn--side" id="btnSearch" aria-label="Zoeken">
       <svg viewBox="0 0 24 24" fill="none">
-        <path d="M4 7h16M9 7V5a1 1 0 011-1h4a1 1 0 011 1v2M7 7l1 13h8l1-13M10 11v5M14 11v5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        <circle cx="11" cy="11" r="6.5" stroke="currentColor" stroke-width="2"/>
+        <path d="M15.5 15.5L20 20" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
       </svg>
     </button>
 
-    <button type="button" class="ifruit-btn ifruit-btn--check" id="btnJump" aria-label="Naar huidige stop">
+    <button type="button" class="ifruit-btn ifruit-btn--plus" id="btnPlus" aria-label="Nieuw">
       <svg viewBox="0 0 24 24" fill="none">
-        <path d="M5 12.5l5 5L20 7" stroke="#fff" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"/>
+        <path d="M12 5v14M5 12h14" stroke="#fff" stroke-width="3.4" stroke-linecap="round"/>
       </svg>
     </button>
 
@@ -85,7 +105,15 @@
 
 </div>
 
-<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-<script src="taipei.js"></script>
+<script src="wyr.js"></script>
+<script>
+  document.getElementById('btnBack')?.addEventListener('click', () => {
+    window.location.href = '../index.html';
+  });
+  document.getElementById('btnSearch')?.addEventListener('click', () => {});
+  document.getElementById('btnPlus')?.addEventListener('click', () => {
+    document.getElementById('btnNext')?.click();
+  });
+</script>
 </body>
 </html>
