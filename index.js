@@ -57,9 +57,10 @@ if (isFineTouch && skyline) {
 // ── APP-LAUNCH ZOOM TRANSITION ──
 const launchOverlay = document.getElementById('launchOverlay');
 const APP_COLORS = {
-  treasure:  'rgba(201,48,44,0.92)',   // red — matches Schatzoeker tile
-  questions: 'rgba(31,93,204,0.92)',   // blue — matches Druijfhartig tile
-  wyr:       'rgba(214,58,26,0.92)',   // orange-red — matches WYR tile
+  treasure:   'rgba(201,48,44,0.92)',   // red — matches Schatzoeker tile
+  questions:  'rgba(31,93,204,0.92)',   // blue — matches Druijfhartig tile
+  wyr:        'rgba(214,58,26,0.92)',   // orange-red — matches WYR tile
+  kaohsiung:  'rgba(80,60,180,0.92)',   // purple — matches Drakenpad tile
 };
 
 document.querySelectorAll('a.ifruit-app:not(.ifruit-app--locked)').forEach(link => {

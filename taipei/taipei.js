@@ -13,7 +13,6 @@ const STOPS = [
         answerKeywords: ['achthoek', 'octagon', 'octagonaal', 'achtkant', '8-hoek', 'achthoekig'],
         hints: [
           "De vorm past bij een geluksgetal in de Chinese cultuur.",
-          "Als je deze niet weet, kan je beter terug naar de basisschool"
         ],
         successMsg: "Correct! Het dak is achthoekig. Het getal acht wordt in de Chinese cultuur verbonden met geluk en voorspoed."
       },
@@ -22,7 +21,6 @@ const STOPS = [
         answerKeywords: ['theater', 'voorstellingen', 'national theater'],
         hints: [
           "Links is dus niet rechts",
-          "Misschien dat we hier een keer naar Tafkal kunnen, of misschien beter in NL"
         ],
         successMsg: "Klopt! Het plein wordt geflankeerd door het National Theater."
       },
@@ -31,7 +29,6 @@ const STOPS = [
         answerKeywords: ['89', 'negenentachtig', 'eighty-nine', 'eighty nine'],
         hints: [
           "Dit is ongeveer het gewicht van Daan na Finland",
-          "Het getal is gelijk aan het aantal levensjaren van Chiang Kai-shek."
         ],
         successMsg: "Mooi spel — 89 treden, één voor elk levensjaar van Chiang Kai-shek."
       }
@@ -47,32 +44,29 @@ const STOPS = [
     travelTip: "Verlaat het CKS-plein aan de zuidkant richting Nanhai Road — de ingang van de botanische tuin is zo'n 5 minuten lopen naar het zuiden.",
     questions: [
       {
-        task: "Bij het historische Herbariumgebouw staat een informatiebord over de oorsprong van het gebouw. In welk jaar werd dit rode bakstenen gebouw gebouwd?",
-        answerKeywords: ['1924'],
+        task: "Zoek zowel het Herbarium als het Museum van het Keizerlijk Gezantschap. Welk gebouw is volgens de informatieborden het oudst?",
+        answerKeywords: ["gezantschap", "guesthouse", "gezantshuis", "imperial envoy"],
         hints: [
-          "Zoek naar een gebouw met veel rode bakstenen.",
-          "Het antwoord staat op een officieel informatiepaneel.5"
-       ],
-        successMsg: "Precies! De lotus — symbool van zuiverheid en verlichting in het Boeddhisme. Ze groeien vanuit het modderige water omhoog."
+          "Vergelijk de bouwjaren die bij beide historische gebouwen vermeld staan."
+        ],
+        successMsg: "Correct! Het voormalige gezantshuis dateert uit 1888 en is ouder dan het Herbarium uit 1924."
       },
       {
-        task: "De botanische tuin is niet alleen een park, maar ook een plek voor wetenschappelijk onderzoek. Waarover gaat dat onderzoek vooral?",
-        answerKeywords: ['planten', 'botanie', 'flora', 'plantensoorten', 'natuur', 'trees', 'plants'],
-        hints: [
-          "De naam van de plek verraadt het eigenlijk al.",
-          "Het gaat niet om dieren, maar om alles wat groeit."
-        ],
-        successMsg: "Goed! De tuin is gericht op planten, plantensoorten en botanisch onderzoek."
+          task: "Ga naar de Lotus Pond en zoek een plek waar je tegelijk het water, de lotusvelden en het grote museumgebouw kunt zien. Welk museum wordt daar weerspiegeld in het water?",
+          answerKeywords: ["historisch museum", "history museum", "museum"],
+          hints: [
+            "Kijk naar het grote traditionele gebouw direct naast de vijver."
+          ],
+          successMsg: "Correct! Dat is het National Museum of History naast de Lotus Pond."
       },
       {
-        task: "Bij de lotusvijver staat een opvallend gebouw met rode muren en groene dakpannen. Welk soort gebouw is dit?",
-        answerKeywords: ['museum', 'nationaal historisch museum', 'national museum of history', 'historisch museum'],
-        hints: [
-          "Het gebouw bewaart geen planten, maar geschiedenis en cultuur.",
-          "De naam bevat iets met 'geschiedenis'."
-        ],
-        successMsg: "Correct! Dat is het National Museum of History, herkenbaar aan de rode muren en groene dakpannen."
-      }
+         task: "Bij de Chinese Zodiac Plants Garden zijn twaalf planten gekoppeld aan dieren uit de dierenriem. Welk dier hoort bij de plantensoort Ulmus parvifolia volgens het informatiebord?",
+         answerKeywords: ["rat", "muis"],
+         hints: [
+           "Zoek het bord waarop alle twaalf dieren en planten samen worden uitgelegd."
+         ],
+         successMsg: "Correct! Ulmus parvifolia staat in deze tuin gekoppeld aan de Rat uit de Chinese dierenriem."
+      },
     ]
   },
   {
@@ -85,20 +79,18 @@ const STOPS = [
     travelTip: "Neem de MRT Green Line van Xiaonanmen Station (2 min lopen van de botanische tuin) één stop naar Ximen Station.",
     questions: [
       {
-        task: "Kijk naar het Ximen Red House. Welke geometrische vorm heeft het bekende voorste deel van het gebouw?",
-        answerKeywords: ['achthoek', 'octagon', 'octagonaal', 'achtkant', '8-hoek', 'achthoekig'],
-        hints: [
-          "Tel de kanten van het gebouw als je er recht voor staat.",
-          "Het heeft evenveel hoeken als het dak van CKS Memorial Hall."
-        ],
-        successMsg: "Goed! Het Red House heeft een opvallende achthoekige vorm."
+          task: "Bij MRT-uitgang ligt de beroemde regenboogoversteekplaats. Welk cijfer komt zowel terug in de naam van de installatie als op de metro-uitgang?",
+          answerKeywords: ["6", "zes"],
+          hints: [
+            "Lees de naam van de oversteekplaats en vergelijk die met het uitgangsnummer."
+          ],
+          successMsg: "Juist! De installatie verwijst direct naar uitgang 6."
       },
       {
         task: "Zoek het eerste regenboogzebrapad van Taiwan, vlak bij het Rode Huis. Welke kleur heeft de middelste streep?",
         answerKeywords: ['geel', 'yellow', 'gold'],
         hints: [
           "Het zebrapad ligt vlak bij het achthoekige rode bakstenen gebouw.",
-          "Kijk naar het allerste midden van het zebrapad — het is een warme, zonnige kleur."
         ],
         successMsg: "Precies goed! De middelste streep is geel — een symbool van zon en trots."
       },
@@ -107,7 +99,6 @@ const STOPS = [
         answerKeywords: ['markt', 'public market', 'openbare markt', 'market'],
         hints: [
           "Denk aan eten, handel en kraampjes.",
-          "Het was een plek waar mensen dingen kochten en verkochten."
         ],
         successMsg: "Precies! Het Red House werd in 1908 gebouwd als openbare markt tijdens de Japanse periode."
       }
@@ -119,7 +110,7 @@ const STOPS = [
     name: 'Longshan Tempel',
     coords: [25.0376, 121.4997],
     desc: "De beroemdste tempel van Taipei, gebouwd in 1738. De lucht is zwaar van wierook en locals komen hier voor alles — van liefdesadvies tot gelukswensen voor een nieuwe baan.",
-    info: "Longshan Tempel (龍山寺, 'Drakenberttempel') werd in 1738 gesticht door immigranten uit de Chinese provincie Fujian. Hij overleefde aardbevingen, tyfoons én een Amerikaans bombardement in 1945 dat de hoofdhal verwoestte — waarna de tempel elke keer werd herbouwd. Bijzonder aan Longshan is de mix van religies: boeddhisme, taoïsme en Chinese volksreligie leven hier vredig naast elkaar. Locals komen niet alleen om te bidden, maar ook om via jiaobei — halvemaanvormige houten blokjes — een vraag aan de goden te stellen. De tempel is van vroeg in de ochtend tot laat in de avond open en altijd in bedrijf.",
+    info: "Longshan Tempel (龍山寺, 'Drakenbergtempel') werd in 1738 gesticht door immigranten uit de Chinese provincie Fujian. Hij overleefde aardbevingen, tyfoons én een Amerikaans bombardement in 1945 dat de hoofdhal verwoestte — waarna de tempel elke keer werd herbouwd. Bijzonder aan Longshan is de mix van religies: boeddhisme, taoïsme en Chinese volksreligie leven hier vredig naast elkaar. Locals komen niet alleen om te bidden, maar ook om via jiaobei — halvemaanvormige houten blokjes — een vraag aan de goden te stellen. De tempel is van vroeg in de ochtend tot laat in de avond open en altijd in bedrijf.",
     travelTip: "Neem de MRT Blue Line één stop naar het zuiden tot Longshan Temple Station, Uitgang 1. De tempel ligt recht tegenover het park.",
     questions: [
       {
@@ -127,45 +118,42 @@ const STOPS = [
         answerKeywords: ['guanyin', 'guan yin', 'kuan yin', 'godin van genade', 'goddess of mercy', 'avalokitesvara'],
         hints: [
           "Het is een vrouwelijke bodhisattva, diep geliefd in heel Oost-Azië om haar mededogen.",
-          "Haar naam begint met een 'G'. Ze staat bekend als de Godin van Genade."
         ],
         successMsg: "Correct! Guanyin, de Godin van Genade — het hart van de Longshan Tempel."
       },
       {
         type: 'duo',
-        task: "Jullie zagen allebei een andere tempelversiering. Vertel elkaar wat je zag — en noem samen de twee mythische dieren die jullie tegenkwamen.",
+        task: "Vertel elkaar wat je zag, Welk mythisch dier koos jij? Als jullie in 3..2..1.. hetzelfde noemen dan is de vraag fout. Anders vul je in wat jullie zeiden.",
         answerKeywords: ['draak en feniks', 'feniks en draak', 'draken en feniksen', 'feniksen en draken', 'dragon and phoenix', 'phoenix and dragon', 'draak', 'feniks', 'phoenix', 'dragon'],
         hints: [
           "Eén dier spuugt vuur. Het andere wordt herboren uit de as.",
-          "Ze zijn allebei klassieke versieringen op Chinese tempels — kijk omhoog!"
         ],
         successMsg: "Geweldig samengewerkt! Draken (vuur & kracht) en feniksen (wedergeboorte) — de twee krachtigste symbolen in de Chinese tempeldecoratie.",
         roles: {
           player1: {
             label: "🔴 Speler 1",
             clues: [
-              "Jouw aanwijzing: zoek op of rond de tempel een dier dat VUUR spuugt.",
+              "Zoek de bronzen zuilen in de voorhal. Welk mythisch dier is op beide zuilen in een spiraalvorm omhoog afgebeeld? Kies degene waarvan je denkt dat de ander hem niet kiest, jullie mogen niet dezelfde kiezen.",
               "Onthoud goed wat je ziet — maar laat je scherm NIET zien aan Speler 2!"
             ]
           },
           player2: {
             label: "🔵 Speler 2",
             clues: [
-              "Jouw aanwijzing: zoek op of rond de tempel een dier dat HERBOREN wordt uit de as.",
+              "Zoek de bronzen zuilen in de voorhal. Welk mythisch dier is op beide zuilen in een spiraalvorm omhoog afgebeeld? Kies degene waarvan je denkt dat de ander hem niet kiest, jullie mogen niet dezelfde kiezen.",
               "Onthoud goed wat je ziet — maar laat je scherm NIET zien aan Speler 1!"
             ]
           }
         }
       },
       {
-        task: "In de tempel gebruiken mensen twee halvemaanvormige blokjes om een vraag aan de goden te stellen. Hoe heet dit soort waarzegging?",
-        answerKeywords: ['jiaobei', 'moon blocks', 'divination blocks', 'poe', 'waarzegblokjes'],
-        hints: [
-          "Je gooit twee houten of rode blokjes op de grond.",
-          "In het Engels worden ze vaak 'moon blocks' genoemd."
-        ],
-        successMsg: "Correct! Dat zijn jiaobei, ook wel moon blocks of divination blocks genoemd."
-      }
+          task: "Vergelijk de Dragon Gate en de Tiger Gate. Via welk dier verlaten bezoekers volgens de traditionele route de tempel?",
+          answerKeywords: ["tiger", "tijger"],
+          hints: [
+            "De ingang en uitgang gebruiken verschillende symbolische dieren."
+          ],
+          successMsg: "Goed gezien! Volgens de traditie verlaat je de tempel via de Tiger Gate."
+      },
     ]
   },
   {
@@ -182,7 +170,6 @@ const STOPS = [
         answerKeywords: ['smal en gebogen', 'smaller', 'licht gebogen', 'curved', 'narrow', 'smalle', 'gebogen', 'smal'],
         hints: [
           "Vergelijk het met moderne rechte stadswegen.",
-          "Oude straten volgen vaak minder strakke lijnen dan nieuwbouw."
         ],
         successMsg: "Klopt! De straat is relatief smal en licht gebogen, wat goed past bij de oudere stadsstructuur."
       },
@@ -191,7 +178,6 @@ const STOPS = [
         answerKeywords: ['qing', 'japans', 'japanese', 'qing en japans', 'qing dynasty', 'japanese colonial', 'japanse koloniale'],
         hints: [
           "Één periode eindigde in 1895, de andere begon meteen daarna en duurde 50 jaar.",
-          "Denk aan 'keizerlijk Chinees' + de koloniale periode die daarna volgde."
         ],
         successMsg: "Ja! Late Qing-dynastie ontmoet Japans kolonialisme — dát is de architectonische mix."
       },
@@ -200,7 +186,6 @@ const STOPS = [
         answerKeywords: ['mengjia', 'mangka', 'bangka', '艋舺'],
         hints: [
           "Je hoort deze naam ook terug bij Longshan Temple Station.",
-          "Het wordt soms gespeld als Bangka of Mangka."
         ],
         successMsg: "Goed! Bopiliao ligt in het historische Mengjia, ook bekend als Bangka of Mangka."
       }
@@ -220,25 +205,22 @@ const STOPS = [
         answerKeywords: ['bamboe', 'bamboo'],
         hints: [
           "Deze plant groeit snel en heeft duidelijke segmenten.",
-          "Panda's vinden dit ook lekker."
         ],
         successMsg: "Correct! Taipei 101 is geïnspireerd op bamboe, symbool van groei en veerkracht."
       },
       {
-        task: "Tussen de 87e en 92e verdieping hangt een reusachtige gouden bol zichtbaar vanuit het observatiedek. Waarvoor dient die?",
-        answerKeywords: ['demper', 'trillingsdemper', 'massa demper', 'damper', 'tuned mass damper', 'slinger', 'pendulum', 'aardbeving', 'stabilisatie', 'stabilize'],
-        hints: [
-          "Het ding weegt 660 ton en slingert als een pendulum.",
-          "Het neutraliseert iets wat het gebouw doet bij zware wind en aardbevingen."
-        ],
-        successMsg: "Precies! Het is een trillingsdemper — een pendulum van 660 ton die de toren stabiel houdt tijdens tyfoons en aardbevingen."
+          task: "Op de wind-demper (tuned mass damper) in het observatiegedeelte staan ornamenten die bescherming symboliseren. Welk mythisch dier is daar prominent afgebeeld volgens de uitlegpanelen?",
+          answerKeywords: ["dragon", "draak"],
+          hints: [
+            "Zoek naar de enorme gouden bol en de decoratieve elementen eromheen."
+          ],
+          successMsg: "Goed gezien! De draak is een belangrijk beschermend symbool rond de demper."
       },
       {
         task: "Kijk naar de buitenkant van Taipei 101. De ronde ornamenten op de gevel verwijzen naar welk oud Chinees voorwerp?",
         answerKeywords: ['munten', 'coins', 'oude munten', 'chinese coins', 'geld'],
         hints: [
           "Het past bij het thema rijkdom en voorspoed.",
-          "Oude Chinese versies hadden vaak een gat in het midden."
         ],
         successMsg: "Correct! De ronde vormen verwijzen naar oude Chinese munten — passend bij het thema voorspoed."
       }
@@ -250,15 +232,14 @@ const STOPS = [
     name: 'Olifantenberg (Xiangshan)',
     coords: [25.0268, 121.5763],
     desc: "Sluit je dag af met het meest iconische uitzicht van Taipei. Een korte maar steile wandeling van 15 minuten beloont je met een zonsondergangpanorama over Taipei 101 en de hele skyline.",
-    info: "Xiangshan (象山), letterlijk Olifantenberg, is een 183 meter hoge heuvel die deel uitmaakt van de 'Vier Dierenberegen' aan de oostkant van Taipei — samen met de Tijger-, Leeuw- en Luipaardberg. De heuvel was vroeger begroeid met theeplantages tijdens de Japanse periode. Pas nadat Taipei 101 in 2004 zijn deuren opende, ontdekte iedereen dat Xiangshan het perfecte uitkijkpunt is voor het icoon van de stad. De beroemde Zes Reusachtige Rotsen vlak bij de top zijn uitgegroeid tot een van de meest gefotografeerde plekken van heel Taiwan. De wandeling is kort maar snoeihard — goede schoenen zijn geen overbodige luxe.",
+    info: "Xiangshan (象山), is een 183 meter hoge heuvel die deel uitmaakt van de 'Vier Dierenberegen' aan de oostkant van Taipei — samen met de Tijger-, Leeuw- en Luipaardberg. De heuvel was vroeger begroeid met theeplantages tijdens de Japanse periode. Pas nadat Taipei 101 in 2004 zijn deuren opende, ontdekte iedereen dat Xiangshan het perfecte uitkijkpunt is voor het icoon van de stad. De beroemde Zes Reusachtige Rotsen vlak bij de top zijn uitgegroeid tot een van de meest gefotografeerde plekken van heel Taiwan. De wandeling is kort maar snoeihard — goede schoenen zijn geen overbodige luxe.",
     travelTip: "Neem de MRT Rode Lijn één stop zuidwaarts naar Xiangshan Station. Uitgang 2, volg dan de borden ongeveer 10 minuten naar het begin van het wandelpad.",
     questions: [
       {
-        task: "De Chinese naam van Olifantenberg is Xiangshan. Wat betekent 'xiang' in deze context?",
+        task: "De Chinese naam is Xiangshan. Wat betekent 'xiang' in deze context?",
         answerKeywords: ['olifant', 'elephant'],
         hints: [
           "Het dier zit al in de Nederlandse naam.",
-          "Groot dier, slurf, grote oren."
         ],
         successMsg: "Goed! Xiangshan betekent letterlijk Olifantenberg."
       },
@@ -267,16 +248,14 @@ const STOPS = [
         answerKeywords: ['uitzicht op taipei 101', 'skyline', 'view of taipei 101', 'taipei 101', 'uitzicht over taipei', 'uitzicht'],
         hints: [
           "Je komt hier niet alleen voor de natuur.",
-          "Het bekendste gebouw van Taipei staat perfect in beeld."
         ],
         successMsg: "Precies! Vanaf hier heb je een van de bekendste uitzichten op Taipei 101 en de skyline."
       },
       {
-        task: "Vlak bij de top vind je het beroemde fotoplekje met zes enorme rotsblokken. Wat is de Engelse naam van dit plekje?",
+        task: "Vlak bij de top vind je het beroemde fotoplekje. Wat is de Engelse naam van dit plekje?",
         answerKeywords: ['six giant rocks', 'six rocks', 'giant rocks', 'six boulders', 'zes rotsen', 'zes stenen', 'zes rotsblokken'],
         hints: [
           "Het is vernoemd naar het aantal grote stenen waarop je kunt klimmen.",
-          "Drie woorden in het Engels: een getal + een maat + het type steen."
         ],
         successMsg: "Ja! De Six Giant Rocks — het meest gefotografeerde plekje van Taipei. Geniet van de zonsondergang!"
       }
@@ -650,8 +629,9 @@ function renderQuestionForm(stop, q) {
     `<div class="jl-hint">💡 ${escapeHtml(h)}</div>`
   ).join('');
 
-  const hintBtnHtml = hintsShown < q.hints.length
-    ? `<button class="jl-btn jl-btn--grey" id="btnHint">💡 Hint (${hintsShown + 1}/${q.hints.length})</button>`
+  const maxHints = 1;
+  const hintBtnHtml = hintsShown < maxHints && hintsShown < q.hints.length
+    ? `<button class="jl-btn jl-btn--grey" id="btnHint">💡 Hint</button>`
     : '';
 
   stage.innerHTML = `
@@ -684,11 +664,24 @@ function renderQuestionForm(stop, q) {
       submit.disabled = true;
       skip.disabled = true;
       if (hint) hint.disabled = true;
-      setTimeout(() => {
+
+      // Show successMsg below the input
+      const successEl = document.createElement('div');
+      successEl.className = 'jl-success';
+      successEl.textContent = q.successMsg || '✓ Goed gedaan!';
+      input.insertAdjacentElement('afterend', successEl);
+
+      // Replace submit button with a "Next" button
+      const nextBtn = document.createElement('button');
+      nextBtn.className = 'jl-btn jl-btn--green';
+      nextBtn.id = 'btnCorrectNext';
+      nextBtn.textContent = 'Volgende →';
+      submit.replaceWith(nextBtn);
+      nextBtn.addEventListener('click', () => {
         stopCorrect++;
         perQuestionState[`${stop.id}_${currentQuestionIdx}`] = 'done';
         advanceQuestion(stop, q);
-      }, 600);
+      });
     } else {
       input.classList.remove('shake');
       void input.offsetWidth;
