@@ -7,7 +7,8 @@ COPY deploy/nginx.conf /etc/nginx/nginx.conf
 COPY . /usr/share/nginx/html
 
 # Allow uid 1000 to write nginx cache/logs and create pid file
-RUN chown -R 1000:1000 \
+RUN apk upgrade --no-cache && \
+    chown -R 1000:1000 \
       /var/cache/nginx \
       /var/log/nginx \
       /usr/share/nginx/html && \
