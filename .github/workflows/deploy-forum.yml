@@ -30,18 +30,20 @@ jobs:
           context: forum-api
           file: forum-api/Dockerfile
           load: true
-          tags: ghcr.io/r-koolen/druijffc-api:latest
+          tags: druijffc-api:scan
           cache-from: type=gha
           cache-to: type=gha,mode=max
 
       - name: Scan with Trivy
         uses: aquasecurity/trivy-action@ed142fd0673e97e23eac54620cfb913e5ce36c25 # v0.36.0
         with:
-          image-ref: ghcr.io/r-koolen/druijffc-api:latest
+          image-ref: druijffc-api:scan
           format: table
           exit-code: '1'
           severity: CRITICAL,HIGH
           trivyignores: forum-api/.trivyignore.yaml
 
       - name: Push image
-        run: docker push ghcr.io/r-koolen/druijffc-api:latest
+        run: |
+          docker tag druijffc-api:scan ghcr.io/r-koolen/druijffc-api:latest
+          docker push ghcr.io/r-koolen/druijffc-api:latest
