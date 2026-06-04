@@ -8,6 +8,11 @@ COPY . /usr/share/nginx/html
 
 # Allow uid 1000 to write nginx cache/logs and create pid file
 RUN apk upgrade --no-cache && \
+    mkdir -p /var/cache/nginx/client_temp \
+             /var/cache/nginx/proxy_temp \
+             /var/cache/nginx/fastcgi_temp \
+             /var/cache/nginx/uwsgi_temp \
+             /var/cache/nginx/scgi_temp && \
     chown -R 1000:1000 \
       /var/cache/nginx \
       /var/log/nginx \
