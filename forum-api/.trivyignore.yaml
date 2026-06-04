@@ -1,0 +1,3 @@
+# Trivy vulnerability ignore list for the forum-api image
+# Add CVE IDs here to suppress known false-positives, e.g.:
+# - CVE-2023-12345

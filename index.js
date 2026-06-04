@@ -61,6 +61,7 @@ const APP_COLORS = {
   questions:  'rgba(31,93,204,0.92)',   // blue — matches Druijfhartig tile
   wyr:        'rgba(214,58,26,0.92)',   // orange-red — matches WYR tile
   kaohsiung:  'rgba(80,60,180,0.92)',   // purple — matches Drakenpad tile
+  forum:      'rgba(200,140,0,0.92)',   // gold — matches Meme Heaven tile
 };
 
 document.querySelectorAll('a.ifruit-app:not(.ifruit-app--locked)').forEach(link => {

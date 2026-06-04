@@ -1,0 +1,7 @@
+.git
+.github
+forum-api
+deploy/Dockerfile
+deploy/.trivyignore.yaml
+.vscode
+*.md
