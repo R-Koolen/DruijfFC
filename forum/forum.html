@@ -52,11 +52,17 @@
 
     <!-- Gold header bar -->
     <div class="jl-header fm-header">
-      <span class="jl-header-title">Druijf Meme Heaven</span>
+      <span class="jl-header-title" id="fmHeaderTitle">Druijf Meme Heaven</span>
     </div>
 
-    <!-- Content area — post form + message list -->
-    <div class="jl-stage" id="forumStage">
+    <!-- CATEGORY SELECTION VIEW -->
+    <div class="jl-stage" id="fmCategoryView">
+      <div class="jl-section-label">Kies een bestemming</div>
+      <div class="fm-category-grid" id="fmCategoryGrid"></div>
+    </div>
+
+    <!-- BOARD VIEW (hidden until category selected) -->
+    <div class="jl-stage" id="fmBoardView" style="display:none">
 
       <div class="jl-section-label">Nieuw bericht</div>
       <div class="fm-posted-flash" id="fmFlash">✓ Bericht geplaatst!</div>

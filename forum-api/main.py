@@ -46,6 +46,10 @@ def init_db() -> None:
         )
         """
     )
+    try:
+        db.execute("ALTER TABLE messages ADD COLUMN category TEXT NOT NULL DEFAULT ''")
+    except sqlite3.OperationalError:
+        pass
     db.commit()
     db.close()
 
@@ -56,14 +60,21 @@ init_db()
 class MessageIn(BaseModel):
     name: str = Field(min_length=1, max_length=50)
     content: str = Field(min_length=1, max_length=280)
+    category: str = Field(default='', max_length=50)
 
 
 @app.get("/forum/api/messages")
-def get_messages():
+def get_messages(category: str = ""):
     db = get_db()
-    rows = db.execute(
-        "SELECT id, name, content, created_at FROM messages ORDER BY id DESC LIMIT 100"
-    ).fetchall()
+    if category:
+        rows = db.execute(
+            "SELECT id, name, content, category, created_at FROM messages WHERE category = ? ORDER BY id DESC LIMIT 100",
+            (category,),
+        ).fetchall()
+    else:
+        rows = db.execute(
+            "SELECT id, name, content, category, created_at FROM messages ORDER BY id DESC LIMIT 100"
+        ).fetchall()
     db.close()
     return [dict(r) for r in rows]
 
@@ -73,12 +84,12 @@ def get_messages():
 def post_message(request: Request, body: MessageIn):
     db = get_db()
     cursor = db.execute(
-        "INSERT INTO messages (name, content) VALUES (?, ?)",
-        (body.name, body.content),
+        "INSERT INTO messages (name, content, category) VALUES (?, ?, ?)",
+        (body.name, body.content, body.category),
     )
     db.commit()
     row = db.execute(
-        "SELECT id, name, content, created_at FROM messages WHERE id = ?",
+        "SELECT id, name, content, category, created_at FROM messages WHERE id = ?",
         (cursor.lastrowid,),
     ).fetchone()
     db.close()

@@ -1,5 +1,17 @@
 const API_BASE = '/forum/api';
 
+const CATEGORIES = [
+  { slug: 'hamburg',     label: 'Hamburg',     flag: '🇩🇪' },
+  { slug: 'bergamo',     label: 'Bergamo',     flag: '🇮🇹' },
+  { slug: 'nice',        label: 'Nice',        flag: '🇫🇷' },
+  { slug: 'kroatie',     label: 'Kroatië',     flag: '🇭🇷' },
+  { slug: 'finland',     label: 'Finland',     flag: '🇫🇮' },
+  { slug: 'taiwan',      label: 'Taiwan',      flag: '🇹🇼' },
+  { slug: 'klassiekers', label: 'Klassiekers', flag: '⭐' },
+];
+
+let currentCategory = null;
+
 const AVATAR_COLORS = [
   '#C9302C',
   '#3A6BD8',
@@ -33,13 +45,42 @@ function escHtml(s) {
     .replace(/>/g, '&gt;');
 }
 
-const listEl    = document.getElementById('fmList');
-const flashEl   = document.getElementById('fmFlash');
-const nameInput = document.getElementById('fmName');
-const contentEl = document.getElementById('fmContent');
-const charCount = document.getElementById('fmCount');
-const errorEl   = document.getElementById('fmError');
-const submitBtn = document.getElementById('fmSubmit');
+const categoryView = document.getElementById('fmCategoryView');
+const boardView    = document.getElementById('fmBoardView');
+const headerTitle  = document.getElementById('fmHeaderTitle');
+const listEl       = document.getElementById('fmList');
+const flashEl      = document.getElementById('fmFlash');
+const nameInput    = document.getElementById('fmName');
+const contentEl    = document.getElementById('fmContent');
+const charCount    = document.getElementById('fmCount');
+const errorEl      = document.getElementById('fmError');
+const submitBtn    = document.getElementById('fmSubmit');
+
+// Build category grid
+const grid = document.getElementById('fmCategoryGrid');
+CATEGORIES.forEach(cat => {
+  const btn = document.createElement('button');
+  btn.type = 'button';
+  btn.className = 'fm-category-tile';
+  btn.innerHTML = `<span class="fm-cat-flag">${cat.flag}</span><span class="fm-cat-label">${escHtml(cat.label)}</span>`;
+  btn.addEventListener('click', () => selectCategory(cat));
+  grid.appendChild(btn);
+});
+
+function selectCategory(cat) {
+  currentCategory = cat.slug;
+  headerTitle.textContent = `${cat.flag} ${cat.label}`;
+  categoryView.style.display = 'none';
+  boardView.style.display = '';
+  loadMessages();
+}
+
+function showCategories() {
+  currentCategory = null;
+  headerTitle.textContent = 'Druijf Meme Heaven';
+  boardView.style.display = 'none';
+  categoryView.style.display = '';
+}
 
 function renderMessages(messages) {
   if (!messages.length) {
@@ -60,8 +101,9 @@ function renderMessages(messages) {
 }
 
 async function loadMessages() {
+  if (!currentCategory) return;
   try {
-    const r = await fetch(`${API_BASE}/messages`);
+    const r = await fetch(`${API_BASE}/messages?category=${encodeURIComponent(currentCategory)}`);
     if (!r.ok) return;
     renderMessages(await r.json());
   } catch {}
@@ -78,8 +120,8 @@ submitBtn.addEventListener('click', async () => {
   const content = contentEl.value.trim();
   errorEl.textContent = '';
 
-  if (!name)    { errorEl.textContent = 'Vul je naam in.';              nameInput.focus(); return; }
-  if (!content) { errorEl.textContent = 'Bericht mag niet leeg zijn.';  contentEl.focus();  return; }
+  if (!name)    { errorEl.textContent = 'Vul je naam in.';             nameInput.focus(); return; }
+  if (!content) { errorEl.textContent = 'Bericht mag niet leeg zijn.'; contentEl.focus(); return; }
 
   submitBtn.disabled = true;
   submitBtn.textContent = 'Plaatsen...';
@@ -88,7 +130,7 @@ submitBtn.addEventListener('click', async () => {
     const r = await fetch(`${API_BASE}/messages`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ name, content }),
+      body: JSON.stringify({ name, content, category: currentCategory }),
     });
 
     if (r.status === 429) {
@@ -119,15 +161,19 @@ submitBtn.addEventListener('click', async () => {
 });
 
 document.getElementById('btnBack').addEventListener('click', () => {
-  window.location.href = '../index.html';
+  if (currentCategory) {
+    showCategories();
+  } else {
+    window.location.href = '../index.html';
+  }
 });
 
 document.getElementById('btnCompose').addEventListener('click', () => {
-  document.getElementById('forumStage').scrollTo({ top: 0, behavior: 'smooth' });
+  if (!currentCategory) return;
+  boardView.scrollTo({ top: 0, behavior: 'smooth' });
   setTimeout(() => nameInput.focus(), 300);
 });
 
 document.getElementById('btnRefresh').addEventListener('click', loadMessages);
 
-loadMessages();
 setInterval(loadMessages, 7500);
