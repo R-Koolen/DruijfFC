@@ -17,9 +17,10 @@ html, body {
   border: none;
 }
 
-.ps-step-row .ps-chevron {
-  color: var(--jl-text-muted);
-  flex-shrink: 0;
+.ps-pin-avatar {
+  font-size: 20px;
+  background: var(--jl-row-alt);
+  border-radius: 8px;
 }
 
 .ps-empty {
@@ -47,33 +48,46 @@ html, body {
 }
 
 .ps-detail-meta {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 10px 14px 0;
+  padding: 10px 14px 4px;
   flex-shrink: 0;
-  gap: 10px;
 }
 
 .ps-detail-date {
-  font-size: 12px;
+  font-size: 11px;
   font-weight: 700;
-  letter-spacing: 0.08em;
+  letter-spacing: 0.1em;
   text-transform: uppercase;
   color: var(--jl-text-muted);
 }
 
-.ps-live-badge {
-  font-size: 11px;
+/* ── LOCK BANNER ── */
+.ps-lock-banner {
+  margin: 6px 14px;
+  padding: 9px 14px;
+  border-radius: 8px;
+  font-size: 13px;
   font-weight: 700;
-  color: var(--gta-gold);
-  background: rgba(255, 200, 87, 0.12);
-  border: 1px solid rgba(255, 200, 87, 0.25);
-  border-radius: 999px;
-  padding: 3px 10px;
-  white-space: nowrap;
+  flex-shrink: 0;
 }
 
+.ps-lock-banner--mine {
+  background: rgba(77, 168, 77, 0.15);
+  border: 1px solid rgba(77, 168, 77, 0.35);
+  color: #A0FFBE;
+}
+
+.ps-lock-banner--other {
+  background: rgba(255, 200, 87, 0.10);
+  border: 1px solid rgba(255, 200, 87, 0.25);
+  color: var(--gta-gold);
+}
+
+/* ── NAME PROMPT ── */
+.ps-name-prompt {
+  flex-shrink: 0;
+}
+
+/* ── CONTENT AREA ── */
 .ps-content-area {
   flex: 1;
   display: flex;
@@ -91,6 +105,12 @@ html, body {
   font-size: 15px;
 }
 
+.ps-textarea[readonly] {
+  opacity: 0.85;
+  cursor: default;
+}
+
+/* ── SAVE INDICATOR ── */
 .ps-save-indicator {
   font-size: 11px;
   font-weight: 700;
@@ -100,11 +120,21 @@ html, body {
   transition: color 0.2s;
 }
 
-.ps-save-indicator.saved { color: var(--jl-row-active); }
-.ps-save-indicator.error { color: #FF6B6B; }
+.ps-save-indicator--saved { color: var(--jl-row-active); }
+.ps-save-indicator--error { color: #FF6B6B; }
 
-/* ── DELETE BUTTON (bottom nav left slot) ── */
+/* ── DELETE BUTTON ── */
 .ps-btn-delete {
   color: #FF5050;
   filter: drop-shadow(0 1px 0 rgba(0,0,0,0.6));
+}
+
+/* ── WRITE BUTTON (center nav, teal) ── */
+.ps-btn-write {
+  background: #1A8A7A;
+  border-color: #000;
+}
+
+.ps-btn-write:active {
+  background: #136660;
 }

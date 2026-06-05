@@ -1,9 +1,11 @@
 from __future__ import annotations
 
+import asyncio
 import json
 import os
 import sqlite3
 from collections import defaultdict
+from datetime import datetime, timedelta
 
 from fastapi import FastAPI, HTTPException, Request, WebSocket, WebSocketDisconnect
 from fastapi.middleware.cors import CORSMiddleware
@@ -22,11 +24,14 @@ app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["https://druijffc.lpd50.uk"],
-    allow_methods=["GET", "POST", "PUT", "DELETE"],
+    allow_methods=["GET", "POST", "PUT", "DELETE", "PATCH"],
     allow_headers=["Content-Type"],
 )
 
-# In-memory WebSocket registry: step_id → set of WebSocket connections
+# ── Polarsteps in-memory state (never persisted) ──
+# {step_id: {"token": str, "expires": datetime, "writer": str}}
+ps_locks: dict[int, dict] = {}
+# {step_id: set[WebSocket]}  — readers only
 ps_rooms: dict[int, set[WebSocket]] = defaultdict(set)
 
 
@@ -57,12 +62,13 @@ def init_db() -> None:
         pass
     db.execute(
         """
-        CREATE TABLE IF NOT EXISTS ps_steps (
+        CREATE TABLE IF NOT EXISTS steps (
             id         INTEGER PRIMARY KEY AUTOINCREMENT,
-            name       TEXT NOT NULL,
-            date       TEXT NOT NULL,
+            title      TEXT NOT NULL,
+            date       TEXT NOT NULL DEFAULT (date('now')),
             content    TEXT NOT NULL DEFAULT '',
-            created_at TEXT NOT NULL DEFAULT (datetime('now'))
+            created_at TEXT NOT NULL DEFAULT (datetime('now')),
+            updated_at TEXT NOT NULL DEFAULT (datetime('now'))
         )
         """
     )
@@ -73,12 +79,51 @@ def init_db() -> None:
 init_db()
 
 
-# ── Forum ──
+@app.on_event("startup")
+async def startup() -> None:
+    asyncio.create_task(_lock_cleanup_loop())
+
+
+async def _lock_cleanup_loop() -> None:
+    """Remove expired locks every 10 s and broadcast 'unlocked'."""
+    while True:
+        await asyncio.sleep(10)
+        now = datetime.utcnow()
+        expired = [sid for sid, lk in list(ps_locks.items()) if now > lk["expires"]]
+        for sid in expired:
+            del ps_locks[sid]
+            await _broadcast(sid, {"type": "unlocked"})
+
+
+async def _broadcast(step_id: int, msg: dict) -> None:
+    if step_id not in ps_rooms:
+        return
+    text = json.dumps(msg)
+    for ws in list(ps_rooms[step_id]):
+        try:
+            await ws.send_text(text)
+        except Exception:
+            ps_rooms[step_id].discard(ws)
+
+
+def _active_lock(step_id: int) -> dict | None:
+    lock = ps_locks.get(step_id)
+    if lock is None:
+        return None
+    if datetime.utcnow() > lock["expires"]:
+        del ps_locks[step_id]
+        return None
+    return lock
+
+
+# ══════════════════════════════════════════
+# Forum
+# ══════════════════════════════════════════
 
 class MessageIn(BaseModel):
     name: str = Field(min_length=1, max_length=50)
     content: str = Field(min_length=1, max_length=280)
-    category: str = Field(default='', max_length=50)
+    category: str = Field(default="", max_length=50)
 
 
 @app.get("/forum/api/messages")
@@ -86,7 +131,8 @@ def get_messages(category: str = ""):
     db = get_db()
     if category:
         rows = db.execute(
-            "SELECT id, name, content, category, created_at FROM messages WHERE category = ? ORDER BY id DESC LIMIT 100",
+            "SELECT id, name, content, category, created_at FROM messages "
+            "WHERE category = ? ORDER BY id DESC LIMIT 100",
             (category,),
         ).fetchall()
     else:
@@ -114,22 +160,34 @@ def post_message(request: Request, body: MessageIn):
     return dict(row)
 
 
-# ── Polarsteps REST ──
+# ══════════════════════════════════════════
+# Polarsteps — REST
+# ══════════════════════════════════════════
 
-class StepIn(BaseModel):
-    name: str = Field(min_length=1, max_length=100)
+class StepCreate(BaseModel):
+    title: str = Field(min_length=1, max_length=100)
     date: str = Field(min_length=1, max_length=10)
 
 
-class StepContentIn(BaseModel):
+class StepPatch(BaseModel):
     content: str
+    session_token: str
+
+
+class LockRequest(BaseModel):
+    session_token: str
+    writer: str = Field(default="Iemand", max_length=50)
+
+
+class HeartbeatRequest(BaseModel):
+    session_token: str
 
 
 @app.get("/polarsteps/api/steps")
 def get_steps():
     db = get_db()
     rows = db.execute(
-        "SELECT id, name, date, created_at FROM ps_steps ORDER BY date ASC, id ASC"
+        "SELECT id, title, date, updated_at FROM steps ORDER BY date ASC, id ASC"
     ).fetchall()
     db.close()
     return [dict(r) for r in rows]
@@ -137,15 +195,15 @@ def get_steps():
 
 @app.post("/polarsteps/api/steps", status_code=201)
 @limiter.limit("5/minute")
-def create_step(request: Request, body: StepIn):
+def create_step(request: Request, body: StepCreate):
     db = get_db()
     cursor = db.execute(
-        "INSERT INTO ps_steps (name, date) VALUES (?, ?)",
-        (body.name, body.date),
+        "INSERT INTO steps (title, date) VALUES (?, ?)",
+        (body.title, body.date),
     )
     db.commit()
     row = db.execute(
-        "SELECT id, name, date, content, created_at FROM ps_steps WHERE id = ?",
+        "SELECT id, title, date, content, created_at, updated_at FROM steps WHERE id = ?",
         (cursor.lastrowid,),
     ).fetchone()
     db.close()
@@ -156,7 +214,7 @@ def create_step(request: Request, body: StepIn):
 def get_step(step_id: int):
     db = get_db()
     row = db.execute(
-        "SELECT id, name, date, content, created_at FROM ps_steps WHERE id = ?",
+        "SELECT id, title, date, content, created_at, updated_at FROM steps WHERE id = ?",
         (step_id,),
     ).fetchone()
     db.close()
@@ -165,83 +223,100 @@ def get_step(step_id: int):
     return dict(row)
 
 
-@app.put("/polarsteps/api/steps/{step_id}")
-async def update_step(step_id: int, body: StepContentIn):
+@app.patch("/polarsteps/api/steps/{step_id}")
+@limiter.limit("60/minute")
+async def patch_step(request: Request, step_id: int, body: StepPatch):
+    lock = _active_lock(step_id)
+    if lock is None or lock["token"] != body.session_token:
+        raise HTTPException(status_code=403, detail="Geen actieve schrijflock voor dit token")
     db = get_db()
-    db.execute("UPDATE ps_steps SET content = ? WHERE id = ?", (body.content, step_id))
+    db.execute(
+        "UPDATE steps SET content = ?, updated_at = datetime('now') WHERE id = ?",
+        (body.content, step_id),
+    )
     db.commit()
     row = db.execute(
-        "SELECT id, name, date, content, created_at FROM ps_steps WHERE id = ?",
+        "SELECT id, title, date, content, updated_at FROM steps WHERE id = ?",
         (step_id,),
     ).fetchone()
     db.close()
     if not row:
         raise HTTPException(status_code=404, detail="Step niet gevonden")
-    if step_id in ps_rooms:
-        msg = json.dumps({"type": "update", "content": body.content})
-        for ws in list(ps_rooms[step_id]):
-            try:
-                await ws.send_text(msg)
-            except Exception:
-                ps_rooms[step_id].discard(ws)
+    await _broadcast(step_id, {"type": "content", "content": body.content})
     return dict(row)
 
 
 @app.delete("/polarsteps/api/steps/{step_id}", status_code=204)
-def delete_step(step_id: int):
+async def delete_step(step_id: int):
     db = get_db()
-    db.execute("DELETE FROM ps_steps WHERE id = ?", (step_id,))
+    db.execute("DELETE FROM steps WHERE id = ?", (step_id,))
     db.commit()
     db.close()
+    ps_locks.pop(step_id, None)
+    await _broadcast(step_id, {"type": "deleted"})
 
 
-# ── Polarsteps WebSocket ──
+@app.post("/polarsteps/api/steps/{step_id}/lock")
+async def acquire_lock(step_id: int, body: LockRequest):
+    existing = _active_lock(step_id)
+    if existing and existing["token"] != body.session_token:
+        raise HTTPException(status_code=409, detail=f"{existing['writer']} schrijft al")
+    ps_locks[step_id] = {
+        "token": body.session_token,
+        "expires": datetime.utcnow() + timedelta(seconds=30),
+        "writer": body.writer,
+    }
+    await _broadcast(step_id, {"type": "locked", "writer": body.writer})
+    return {"locked": True, "writer": body.writer}
 
-@app.websocket("/polarsteps/ws/{step_id}")
+
+@app.delete("/polarsteps/api/steps/{step_id}/lock", status_code=204)
+async def release_lock(step_id: int, session_token: str):
+    lock = _active_lock(step_id)
+    if lock and lock["token"] == session_token:
+        del ps_locks[step_id]
+        await _broadcast(step_id, {"type": "unlocked"})
+
+
+@app.post("/polarsteps/api/steps/{step_id}/heartbeat")
+@limiter.limit("10/minute")
+def heartbeat(request: Request, step_id: int, body: HeartbeatRequest):
+    lock = _active_lock(step_id)
+    if lock is None or lock["token"] != body.session_token:
+        raise HTTPException(status_code=403, detail="Lock niet (meer) actief")
+    lock["expires"] = datetime.utcnow() + timedelta(seconds=30)
+    return {"extended": True}
+
+
+# ══════════════════════════════════════════
+# Polarsteps — WebSocket (server→client only)
+# ══════════════════════════════════════════
+
+@app.websocket("/polarsteps/ws/steps/{step_id}")
 async def polarsteps_ws(websocket: WebSocket, step_id: int):
     await websocket.accept()
     ps_rooms[step_id].add(websocket)
 
     db = get_db()
-    row = db.execute("SELECT content FROM ps_steps WHERE id = ?", (step_id,)).fetchone()
+    row = db.execute("SELECT content FROM steps WHERE id = ?", (step_id,)).fetchone()
     db.close()
-    if row:
-        await websocket.send_text(json.dumps({"type": "init", "content": row["content"]}))
 
-    count = len(ps_rooms[step_id])
-    for ws in list(ps_rooms[step_id]):
-        try:
-            await ws.send_text(json.dumps({"type": "viewers", "count": count}))
-        except Exception:
-            pass
+    lock = _active_lock(step_id)
+    await websocket.send_text(json.dumps({
+        "type": "init",
+        "content": row["content"] if row else "",
+        "lock": {"writer": lock["writer"]} if lock else None,
+    }))
 
     try:
         while True:
-            raw = await websocket.receive_text()
-            data = json.loads(raw)
-            if data.get("type") == "update":
-                content = str(data.get("content", ""))
-                db = get_db()
-                db.execute("UPDATE ps_steps SET content = ? WHERE id = ?", (content, step_id))
-                db.commit()
-                db.close()
-                msg = json.dumps({"type": "update", "content": content})
-                for ws in list(ps_rooms[step_id]):
-                    if ws is not websocket:
-                        try:
-                            await ws.send_text(msg)
-                        except Exception:
-                            ps_rooms[step_id].discard(ws)
+            msg = await websocket.receive()
+            if msg["type"] == "websocket.disconnect":
+                break
+            # Server→client only: silently discard any incoming data
     except WebSocketDisconnect:
         pass
     finally:
         ps_rooms[step_id].discard(websocket)
         if not ps_rooms[step_id]:
             del ps_rooms[step_id]
-        else:
-            count = len(ps_rooms[step_id])
-            for ws in list(ps_rooms[step_id]):
-                try:
-                    await ws.send_text(json.dumps({"type": "viewers", "count": count}))
-                except Exception:
-                    pass

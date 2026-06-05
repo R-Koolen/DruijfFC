@@ -55,7 +55,7 @@
       <span class="jl-header-title" id="psHeaderTitle">Polarsteps</span>
     </div>
 
-    <!-- LIST VIEW -->
+    <!-- ── LIST VIEW ── -->
     <div class="jl-stage" id="psListView">
 
       <div class="jl-section-label">Reizen</div>
@@ -65,7 +65,7 @@
 
       <div class="jl-section-label">Nieuwe step</div>
       <div class="jl-actions ps-new-form">
-        <input type="text" class="jl-input" id="psStepName" placeholder="Naam (bv. Dag 1 — Aankomst)" maxlength="100" autocomplete="off" />
+        <input type="text" class="jl-input" id="psStepTitle" placeholder="Naam (bv. Dag 1 — Aankomst)" maxlength="100" autocomplete="off" />
         <input type="date" class="jl-input" id="psStepDate" />
         <div class="ps-form-error" id="psNewStepError"></div>
         <button type="button" class="jl-btn jl-btn--blue" id="btnAddStep">Toevoegen</button>
@@ -73,16 +73,28 @@
 
     </div>
 
-    <!-- DETAIL VIEW -->
+    <!-- ── DETAIL VIEW ── -->
     <div class="jl-stage ps-detail-stage" id="psDetailView" style="display:none">
 
+      <!-- Date + lock status -->
       <div class="ps-detail-meta">
         <span class="ps-detail-date" id="psDetailDate"></span>
-        <span class="ps-live-badge" id="psViewers" style="display:none"></span>
       </div>
 
+      <!-- Lock banner (shown when locked) -->
+      <div class="ps-lock-banner" id="psLockBanner" style="display:none"></div>
+
+      <!-- Name prompt (shown inline when no name stored) -->
+      <div class="ps-name-prompt" id="psNamePrompt" style="display:none">
+        <div class="jl-actions" style="padding:10px 14px">
+          <input type="text" class="jl-input" id="psWriterName" placeholder="Jouw naam" maxlength="50" autocomplete="off" />
+          <button type="button" class="jl-btn jl-btn--blue" id="btnConfirmName">Schrijven</button>
+        </div>
+      </div>
+
+      <!-- Content area -->
       <div class="ps-content-area">
-        <textarea class="jl-input ps-textarea" id="psTextarea" placeholder="Schrijf hier je verhaal..."></textarea>
+        <textarea class="jl-input ps-textarea" id="psTextarea" placeholder="Schrijf hier je verhaal..." readonly></textarea>
         <span class="ps-save-indicator" id="psSaveIndicator"></span>
       </div>
 
@@ -92,6 +104,8 @@
 
   <!-- BOTTOM NAV -->
   <nav class="ifruit-bottom" aria-label="iFruijt nav">
+
+    <!-- Left: delete (detail only) -->
     <button type="button" class="ifruit-btn ifruit-btn--side ps-btn-delete" id="btnDelete" aria-label="Step verwijderen" style="display:none">
       <svg viewBox="0 0 24 24" fill="none" width="24" height="24">
         <path d="M3 6h18M8 6V4h8v2M19 6l-1 14H6L5 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
@@ -99,14 +113,25 @@
       </svg>
     </button>
 
-    <div></div>
+    <!-- Center: schrijven (detail only, when no lock) -->
+    <button type="button" class="ifruit-btn ifruit-btn--check ps-btn-write" id="btnWrite" aria-label="Schrijven" style="display:none">
+      <svg viewBox="0 0 24 24" fill="none" width="20" height="20">
+        <path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+        <path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </button>
 
+    <!-- Spacer (list view center) -->
+    <div id="navSpacer"></div>
+
+    <!-- Right: back -->
     <button type="button" class="ifruit-btn ifruit-btn--side ifruit-btn--back" id="btnBack" aria-label="Terug">
       <svg viewBox="0 0 24 24" fill="none">
         <path d="M20 12H5" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/>
         <path d="M11 6l-6 6 6 6" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/>
       </svg>
     </button>
+
   </nav>
 
 </div>
