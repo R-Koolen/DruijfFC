@@ -62,6 +62,7 @@ const APP_COLORS = {
   wyr:        'rgba(214,58,26,0.92)',   // orange-red — matches WYR tile
   kaohsiung:  'rgba(80,60,180,0.92)',   // purple — matches Drakenpad tile
   forum:      'rgba(200,140,0,0.92)',   // gold — matches Meme Heaven tile
+  polarsteps: 'rgba(26,138,122,0.92)', // teal — matches Polarsteps tile
 };
 
 document.querySelectorAll('a.ifruit-app:not(.ifruit-app--locked)').forEach(link => {

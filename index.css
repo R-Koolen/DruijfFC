@@ -253,7 +253,8 @@ body {
 .ifruit-tile--green  { background: linear-gradient(180deg, #5BC97A 0%, #2A8F4A 100%); }
 .ifruit-tile--wyr        { background: linear-gradient(180deg, #FF7A3D 0%, #D63A1A 100%); }
 .ifruit-tile--kaohsiung  { background: linear-gradient(180deg, #9B70E0 0%, #2878C0 100%); }
-.ifruit-tile--forum      { background: linear-gradient(180deg, #FFD166 0%, #C88B0A 100%); }
+.ifruit-tile--forum       { background: linear-gradient(180deg, #FFD166 0%, #C88B0A 100%); }
+.ifruit-tile--polarsteps  { background: linear-gradient(180deg, #3DD6C0 0%, #1A8A7A 100%); }
 
 /* Subtle top-half highlight (flatter than before) */
 .ifruit-tile-shine {

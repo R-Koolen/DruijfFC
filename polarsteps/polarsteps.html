@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="theme-color" content="#0A0B0E" />
+  <title>Polarsteps — iFruijt</title>
+  <link rel="stylesheet" href="../main.css" />
+  <link rel="stylesheet" href="polarsteps.css" />
+</head>
+<body>
+
+<div class="ifruit-shell">
+
+  <!-- TOP CHROME STRIP -->
+  <div class="ifruit-top">
+    <div class="ifruit-brand">
+      <svg class="ifruit-apple" viewBox="0 0 16 18" aria-hidden="true">
+        <path d="M11.5 1.5c.3 1.3-.2 2.5-.9 3.3-.7.9-1.8 1.5-2.9 1.4-.3-1.3.3-2.6 1-3.4.7-.8 1.9-1.4 2.8-1.3zM14.6 13.4c-.5 1.2-.8 1.7-1.5 2.7-1 1.4-2.4 3.2-4.1 3.2-1.5 0-1.9-1-3.9-1-2 0-2.5 1-4 1-1.7 0-3-1.6-4-3-2.7-4-3-8.7-1.3-11.2 1.2-1.8 3.1-2.8 4.9-2.8 1.8 0 3 1 4.5 1 1.5 0 2.4-1 4.5-1 1.6 0 3.3.9 4.5 2.3-4 2.2-3.3 7.9-.6 8.8z" fill="currentColor"/>
+      </svg>
+      <span class="ifruit-wordmark">iFruijt</span>
+    </div>
+  </div>
+
+  <!-- PHONE SCREEN -->
+  <div class="ifruit-screen">
+
+    <!-- Status bar -->
+    <div class="ifruit-sb" aria-hidden="true">
+      <div class="sb-left">
+        <svg class="sb-signal" viewBox="0 0 18 14" fill="none">
+          <path d="M2 12 Q9 5 16 12" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
+          <path d="M4.5 12 Q9 7.5 13.5 12" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
+          <path d="M7 12 Q9 10 11 12" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
+          <circle cx="9" cy="12" r="1" fill="currentColor"/>
+        </svg>
+        <svg class="sb-cloud" viewBox="0 0 18 12" fill="none">
+          <path d="M4 10 Q1 10 1 7.5 Q1 5 3.5 5 Q4 3 6.5 3 Q9 3 9.5 5 Q13 5 13 7.5 Q13 10 10 10 Z" fill="currentColor"/>
+        </svg>
+      </div>
+      <div class="sb-center">
+        <span class="sb-day">Wo</span>
+        <span class="sb-dot">·</span>
+        <span class="sb-time">16:42</span>
+      </div>
+      <div class="sb-right">
+        <div class="sb-battery">
+          <span class="sb-batt-fill"></span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Header -->
+    <div class="jl-header ps-header">
+      <span class="jl-header-title" id="psHeaderTitle">Polarsteps</span>
+    </div>
+
+    <!-- LIST VIEW -->
+    <div class="jl-stage" id="psListView">
+
+      <div class="jl-section-label">Reizen</div>
+      <div class="jl-list" id="psStepList">
+        <div class="ps-empty">Nog geen steps — voeg de eerste toe!</div>
+      </div>
+
+      <div class="jl-section-label">Nieuwe step</div>
+      <div class="jl-actions ps-new-form">
+        <input type="text" class="jl-input" id="psStepName" placeholder="Naam (bv. Dag 1 — Aankomst)" maxlength="100" autocomplete="off" />
+        <input type="date" class="jl-input" id="psStepDate" />
+        <div class="ps-form-error" id="psNewStepError"></div>
+        <button type="button" class="jl-btn jl-btn--blue" id="btnAddStep">Toevoegen</button>
+      </div>
+
+    </div>
+
+    <!-- DETAIL VIEW -->
+    <div class="jl-stage ps-detail-stage" id="psDetailView" style="display:none">
+
+      <div class="ps-detail-meta">
+        <span class="ps-detail-date" id="psDetailDate"></span>
+        <span class="ps-live-badge" id="psViewers" style="display:none"></span>
+      </div>
+
+      <div class="ps-content-area">
+        <textarea class="jl-input ps-textarea" id="psTextarea" placeholder="Schrijf hier je verhaal..."></textarea>
+        <span class="ps-save-indicator" id="psSaveIndicator"></span>
+      </div>
+
+    </div>
+
+  </div>
+
+  <!-- BOTTOM NAV -->
+  <nav class="ifruit-bottom" aria-label="iFruijt nav">
+    <button type="button" class="ifruit-btn ifruit-btn--side ps-btn-delete" id="btnDelete" aria-label="Step verwijderen" style="display:none">
+      <svg viewBox="0 0 24 24" fill="none" width="24" height="24">
+        <path d="M3 6h18M8 6V4h8v2M19 6l-1 14H6L5 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        <path d="M10 11v6M14 11v6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+      </svg>
+    </button>
+
+    <div></div>
+
+    <button type="button" class="ifruit-btn ifruit-btn--side ifruit-btn--back" id="btnBack" aria-label="Terug">
+      <svg viewBox="0 0 24 24" fill="none">
+        <path d="M20 12H5" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/>
+        <path d="M11 6l-6 6 6 6" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </button>
+  </nav>
+
+</div>
+
+<script src="polarsteps.js"></script>
+</body>
+</html>
