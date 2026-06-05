@@ -30,18 +30,20 @@ jobs:
           context: .
           file: deploy/Dockerfile
           load: true
-          tags: ghcr.io/r-koolen/druijffc:latest
+          tags: druijffc:scan
           cache-from: type=gha
           cache-to: type=gha,mode=max
 
       - name: Scan with Trivy
         uses: aquasecurity/trivy-action@ed142fd0673e97e23eac54620cfb913e5ce36c25 # v0.36.0
         with:
-          image-ref: ghcr.io/r-koolen/druijffc:latest
+          image-ref: druijffc:scan
           format: table
           exit-code: '1'
           severity: CRITICAL,HIGH
           trivyignores: deploy/.trivyignore.yaml
 
       - name: Push image
-        run: docker push ghcr.io/r-koolen/druijffc:latest
+        run: |
+          docker tag druijffc:scan ghcr.io/r-koolen/druijffc:latest
+          docker push ghcr.io/r-koolen/druijffc:latest
