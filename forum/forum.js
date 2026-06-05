@@ -1,13 +1,13 @@
 const API_BASE = '/forum/api';
 
 const CATEGORIES = [
-  { slug: 'hamburg',     label: 'Hamburg',     flag: '🇩🇪' },
-  { slug: 'bergamo',     label: 'Bergamo',     flag: '🇮🇹' },
-  { slug: 'nice',        label: 'Nice',        flag: '🇫🇷' },
-  { slug: 'kroatie',     label: 'Kroatië',     flag: '🇭🇷' },
-  { slug: 'finland',     label: 'Finland',     flag: '🇫🇮' },
-  { slug: 'taiwan',      label: 'Taiwan',      flag: '🇹🇼' },
-  { slug: 'klassiekers', label: 'Klassiekers', flag: '⭐' },
+  { slug: 'hamburg',     label: 'Hamburg',     cc: 'de' },
+  { slug: 'bergamo',     label: 'Bergamo',     cc: 'it' },
+  { slug: 'nice',        label: 'Nice',        cc: 'fr' },
+  { slug: 'kroatie',     label: 'Kroatië',     cc: 'hr' },
+  { slug: 'finland',     label: 'Finland',     cc: 'fi' },
+  { slug: 'taiwan',      label: 'Taiwan',      cc: 'tw' },
+  { slug: 'klassiekers', label: 'Klassiekers', cc: null },
 ];
 
 let currentCategory = null;
@@ -56,20 +56,28 @@ const charCount    = document.getElementById('fmCount');
 const errorEl      = document.getElementById('fmError');
 const submitBtn    = document.getElementById('fmSubmit');
 
+function catFlagHtml(cat, size = 80) {
+  if (!cat.cc) return '<span class="fm-cat-flag fm-cat-flag--star">⭐</span>';
+  return `<img class="fm-cat-flag" src="https://flagcdn.com/w${size}/${cat.cc}.png" alt="${escHtml(cat.label)} vlag" loading="lazy" />`;
+}
+
 // Build category grid
 const grid = document.getElementById('fmCategoryGrid');
 CATEGORIES.forEach(cat => {
   const btn = document.createElement('button');
   btn.type = 'button';
   btn.className = 'fm-category-tile';
-  btn.innerHTML = `<span class="fm-cat-flag">${cat.flag}</span><span class="fm-cat-label">${escHtml(cat.label)}</span>`;
+  btn.innerHTML = `${catFlagHtml(cat)}<span class="fm-cat-label">${escHtml(cat.label)}</span>`;
   btn.addEventListener('click', () => selectCategory(cat));
   grid.appendChild(btn);
 });
 
 function selectCategory(cat) {
   currentCategory = cat.slug;
-  headerTitle.textContent = `${cat.flag} ${cat.label}`;
+  const headerFlag = cat.cc
+    ? `<img src="https://flagcdn.com/w40/${cat.cc}.png" alt="" style="height:15px;vertical-align:middle;margin-right:5px;border-radius:2px;" loading="lazy" />`
+    : '⭐ ';
+  headerTitle.innerHTML = `${headerFlag}${escHtml(cat.label)}`;
   categoryView.style.display = 'none';
   boardView.style.display = '';
   loadMessages();

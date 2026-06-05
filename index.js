@@ -4,7 +4,7 @@ let toastTimer = null;
 
 function showToast(msg) {
   if (!toast) return;
-  toast.textContent = msg;
+  toast.innerHTML = msg.replace(/\n/g, '<br>');
   toast.classList.add('show');
   clearTimeout(toastTimer);
   toastTimer = setTimeout(() => toast.classList.remove('show'), 2000);

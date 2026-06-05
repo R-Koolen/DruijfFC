@@ -96,8 +96,17 @@ html, body {
 }
 
 .fm-cat-flag {
+  display: block;
+  width: 52px;
+  height: auto;
+  border-radius: 4px;
+}
+
+.fm-cat-flag--star {
+  width: auto;
   font-size: 36px;
   line-height: 1;
+  border-radius: 0;
 }
 
 .fm-cat-label {
