@@ -1,6 +1,29 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="0 0 512 512">
+  <defs>
+    <radialGradient id="gpm" cx="35%" cy="28%" r="65%">
+      <stop offset="0%"   stop-color="#DADADA"/>
+      <stop offset="100%" stop-color="#646464"/>
+    </radialGradient>
+  </defs>
+
+  <!-- Background (no border-radius for maskable — OS clips to shape) -->
   <rect width="512" height="512" fill="#0A0E14"/>
-  <g transform="translate(160, 148) scale(12)" fill="white">
-    <path d="M11.5 1.5c.3 1.3-.2 2.5-.9 3.3-.7.9-1.8 1.5-2.9 1.4-.3-1.3.3-2.6 1-3.4.7-.8 1.9-1.4 2.8-1.3zM14.6 13.4c-.5 1.2-.8 1.7-1.5 2.7-1 1.4-2.4 3.2-4.1 3.2-1.5 0-1.9-1-3.9-1-2 0-2.5 1-4 1-1.7 0-3-1.6-4-3-2.7-4-3-8.7-1.3-11.2 1.2-1.8 3.1-2.8 4.9-2.8 1.8 0 3 1 4.5 1 1.5 0 2.4-1 4.5-1 1.6 0 3.3.9 4.5 2.3-4 2.2-3.3 7.9-.6 8.8z"/>
-  </g>
+
+  <!-- Stem -->
+  <path d="M256,148 C255,128 258,108 254,88" stroke="#A0A0A0" stroke-width="12" fill="none" stroke-linecap="round"/>
+
+  <!-- Leaf -->
+  <ellipse cx="295" cy="106" rx="40" ry="17" transform="rotate(-35 295 106)" fill="url(#gpm)" opacity="0.85"/>
+
+  <!-- Row 1: 3 grapes -->
+  <circle cx="152" cy="200" r="50" fill="url(#gpm)"/>
+  <circle cx="256" cy="200" r="50" fill="url(#gpm)"/>
+  <circle cx="360" cy="200" r="50" fill="url(#gpm)"/>
+
+  <!-- Row 2: 2 grapes -->
+  <circle cx="204" cy="285" r="50" fill="url(#gpm)"/>
+  <circle cx="308" cy="285" r="50" fill="url(#gpm)"/>
+
+  <!-- Row 3: 1 grape -->
+  <circle cx="256" cy="370" r="50" fill="url(#gpm)"/>
 </svg>
